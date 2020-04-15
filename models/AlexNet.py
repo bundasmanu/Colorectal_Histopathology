@@ -46,7 +46,7 @@ class AlexNet(Model.Model):
         except:
             raise CustomError.ErrorCreationModel(config.ERROR_ON_BUILD)
 
-    def train(self, model : Sequential) -> Tuple[History, Sequential]:
+    def train(self, model : Sequential, *args) -> Tuple[History, Sequential]:
 
         '''
         THIS FUNCTION IS RESPONSIBLE FOR MAKE THE TRAINING OF MODEL

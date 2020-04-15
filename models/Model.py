@@ -52,7 +52,7 @@ class Model(ABC):
         try:
 
             model = self.build(*args)
-            history, model = self.train(model)
+            history, model = self.train(model, args[-1])
             predictions = self.predict(model)
 
             return model, predictions, history
@@ -64,7 +64,7 @@ class Model(ABC):
         pass
 
     @abstractmethod
-    def train(self, model : Sequential) -> Tuple[History, Sequential]:
+    def train(self, model : Sequential, *args) -> Tuple[History, Sequential]:
         pass
 
     def predict(self, model : Sequential):
