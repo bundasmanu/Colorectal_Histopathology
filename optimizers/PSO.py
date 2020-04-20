@@ -46,13 +46,17 @@ class PSO(Optimizer.Optimizer):
         try:
 
             d = Designer(limits=[xLimits, yLimits], label=[xLabel, yLabel])
-            animation = plot_contour(pos_history=optimizer.pos_history,
+            pos = []
+            for i in range(config.ITERATIONS):
+                pos.append(optimizer.pos_history[i][:, 0:2])
+            animation = plot_contour(pos_history=pos,
                                      designer=d)
 
-            animation.save(filename, writer='ffmpeg', fps=10)
-            Image(url=filename)
+            plt.close(animation._fig)
+            html_file = animation.to_jshtml()
+            with open(filename, 'w') as f:
+                f.write(html_file)
 
-            plt.show()
         except:
             raise CustomError.ErrorCreationModel(config.ERROR_ON_PLOTTING)
 
