@@ -51,10 +51,11 @@ def main():
         ,columns=[config.IMAGE_PATH, config.TARGET])
 
     # subsample data, if not wanted, rate 1 should be passed
-    data = config_func.get_subsample_of_data(1, data)
-    print(data.head(5))
-    print(data.shape)
-    print(data[config.TARGET].value_counts())
+    if config.SUBSAMPLE_PERCENTAGE != 1:
+        data = config_func.get_subsample_of_data(1, data)
+        print(data.head(5))
+        print(data.shape)
+        print(data[config.TARGET].value_counts())
 
     # get pixel data from images and respectives targets
     X, Y = config_func.resize_images(config.WIDTH, config.HEIGHT, data)

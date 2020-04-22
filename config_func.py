@@ -62,7 +62,7 @@ def get_subsample_of_data(percentage, data):
     try:
 
         if percentage == 0.0:
-            raise
+            raise CustomError.ErrorCreationModel(config.WARNING_SUBSAMPLING)
 
         # new subsample
         subsample = pd.DataFrame()

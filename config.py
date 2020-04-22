@@ -21,6 +21,9 @@ IMAGES_REGEX = '*.tif'
 IMAGE_PATH = 'image_path'
 TARGET = 'target'
 
+# SUBSAMPLE PERCENTAGE
+SUBSAMPLE_PERCENTAGE = 1
+
 # split percentages of data
 VALIDATION_SPLIT = 0.2
 TEST_SPLIT = 0.25
@@ -53,7 +56,8 @@ ERROR_INVALID_NUMBER_ARGS = "\nPlease provide correct number of args"
 ERROR_ON_BUILD = "\nError on building model"
 ERROR_APPEND_STRATEGY = "\nError on appending strategy"
 ERROR_ON_PLOTTING = "\nError on plotting"
-ERROR_ON_SUBSAMPLING = "\n Erro on subsampling, percentage invalid"
+ERROR_ON_SUBSAMPLING = "\n Error on subsampling, percentage invalid"
+WARNING_SUBSAMPLING = "\nIf you want to subsampling data, please pass a value >0 and <1"
 
 #PSO OPTIONS
 TOPOLOGY_FLAG = 0
