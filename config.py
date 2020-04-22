@@ -1,6 +1,16 @@
-WIDTH = 50
-HEIGHT = 50
+WIDTH = 128
+HEIGHT = 128
 CHANNELS = 3
+
+# directories to get images
+INPUT_DIR = 'input'
+IMAGES_ACESS = 'images/*.jpeg'
+TRAIN_LABELS_CSV = 'trainLabels.csv'
+
+# columns of DataFrame
+IMAGE_NAME = 'image'
+IMAGE_PATH = 'image_path'
+TARGET = 'level'
 
 MULTIPROCESSING = True
 
@@ -29,6 +39,7 @@ ERROR_INVALID_NUMBER_ARGS = "\nPlease provide correct number of args"
 ERROR_ON_BUILD = "\nError on building model"
 ERROR_APPEND_STRATEGY = "\nError on appending strategy"
 ERROR_ON_PLOTTING = "\nError on plotting"
+ERROR_ON_SUBSAMPLING = "\n Erro on subsampling, percentage invalid"
 
 #PSO OPTIONS
 TOPOLOGY_FLAG = 0

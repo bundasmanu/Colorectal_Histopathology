@@ -10,6 +10,119 @@ import matplotlib.pyplot as plt
 import itertools
 from keras.models import Model as mp
 from keras.layers import Input, Average
+import cv2
+from exceptions import CustomError
+
+def getImages(directory):
+
+    '''
+    THIS FUNTION RETRIEVES ALL IMAGES FILES
+    :param directory: str --> dict/*.jpg
+    :return: list of all jpg files
+    '''
+
+    try:
+
+        # sort by length of string --> \10_left.jpeg , 99_left.jpeg, 200_left.jpeg, 1000_left.jpeg
+        list_sort_len = sorted(glob(directory), key= len)
+
+        list_left = []
+        list_right = []
+
+        # separation between left and right images
+        for i in range(len(list_sort_len)):
+            if 'left' in list_sort_len[i]:
+                list_left.append(list_sort_len[i])
+            else:
+                list_right.append(list_sort_len[i])
+
+        # intecalate left and right lists
+        sorted_list = []
+        for i, j in zip(range(len(list_left)), range(len(list_right))):
+            sorted_list.append(list_left[i])
+            sorted_list.append(list_right[j])
+
+        return sorted_list
+
+    except:
+        raise
+
+def addNewColumn_Populate_DataFrame(dataFrame, name_new_column, dataToPopulate):
+
+    '''
+    THIS FUNCTION IS USED TO ADD NEW COLUMN TO DATAFRAME, AND POPULATE COLUMN WITH DATA
+    :param dataFrame: dataFrame --> dataFrame to apply changes
+    :param name_new_column: str --> name of new column
+    :param dataToPopulate: List (str) --> strings to populate data
+    :return: dataFrame changed
+    '''
+
+    try:
+
+        dataFrame[name_new_column] = dataToPopulate
+        return dataFrame
+
+    except:
+        raise
+
+def get_subsample_of_data(percentage, data):
+
+    '''
+    THIS FUNCTION IS USED TO GET SUBSAMPLE OF DATA, CONSIDERED ALWAYS THE INITIAL % OF DATA PER CLASS
+    e.g: i want 20% of data
+        - i get the same % of samples by all classes:
+        e.g: 1000 initial values for class 0 in 2000 samples, in the end i get 200 samples for class 0 (same 50% of samples for this class)
+    :param percentage: float --> percentage between 0 and 1, for subsample data
+    :param data: DataFrame --> object with all samples
+    :return: subsample: DataFrame --> object containg only subsample data
+    '''
+
+    try:
+
+        if percentage == 0.0:
+            raise
+
+        # get list with number values per class
+        samples_by_class = data[config.TARGET].value_counts()
+
+        # get percentage per class
+        perc_by_class = samples_by_class / data.shape[0]
+
+        # number of rows on new subsample DataFrame
+        number_rows = data.shape * percentage
+
+        # select random indices by each class
+        subsample = data.sample(n=number_rows, weights=perc_by_class)
+
+        return subsample
+
+    except:
+        raise CustomError.ErrorCreationModel(config.ERROR_ON_SUBSAMPLING)
+
+def resize_images(width, height, data):
+
+    '''
+    :param width: int --> pixel width to resize image
+    :param height: int --> pixel height to resize image
+    :param data: dataframe --> shape ["id", "image_path", "target"]
+    :return x: numpy array --> shape (number images, width, height)
+    :return y: numpy array --> shape (number images, target)
+    '''
+
+    try:
+
+        x = []
+        y = []
+
+        for i in range(len(data[config.IMAGE_NAME])):
+            image = cv2.imread(data.at[i, config.IMAGE_PATH])
+            x.append(cv2.resize(image, (width, height)))
+            y.append(data.at[i, config.TARGET])
+
+        return numpy.array(x), numpy.array(y)
+
+    except:
+        raise
 
 def normalize(X_train, X_val, X_test):
 
