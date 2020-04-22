@@ -1,18 +1,25 @@
-WIDTH = 128
-HEIGHT = 128
+WIDTH = 150
+HEIGHT = 150
 CHANNELS = 3
 
-NUMBER_CLASSES = 5
+NUMBER_CLASSES = 8
 
 # directories to get images
 INPUT_DIR = 'input'
-IMAGES_ACESS = 'images/*.jpeg'
-TRAIN_LABELS_CSV = 'trainLabels.csv'
+STROMA_DIR = 'STROMA'
+TUMOR_DIR = 'TUMOR'
+ADIPOSE_DIR = 'ADIPOSE'
+COMPLEX_DIR = 'COMPLEX'
+DEBRIS_DIR = 'DEBRIS'
+EMPTY_DIR = 'EMPTY'
+LYMPHO_DIR = 'LYMPHO'
+MUCOSA_DIR = 'MUCOSA'
+IMAGES_ACESS = 'images'
+IMAGES_REGEX = '*.tif'
 
 # columns of DataFrame
-IMAGE_NAME = 'image'
 IMAGE_PATH = 'image_path'
-TARGET = 'level'
+TARGET = 'target'
 
 # split percentages of data
 VALIDATION_SPLIT = 0.2

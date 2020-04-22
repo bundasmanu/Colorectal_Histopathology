@@ -24,26 +24,7 @@ def getImages(directory):
 
     try:
 
-        # sort by length of string --> \10_left.jpeg , 99_left.jpeg, 200_left.jpeg, 1000_left.jpeg
-        list_sort_len = sorted(glob(directory), key= len)
-
-        list_left = []
-        list_right = []
-
-        # separation between left and right images
-        for i in range(len(list_sort_len)):
-            if 'left' in list_sort_len[i]:
-                list_left.append(list_sort_len[i])
-            else:
-                list_right.append(list_sort_len[i])
-
-        # intecalate left and right lists
-        sorted_list = []
-        for i, j in zip(range(len(list_left)), range(len(list_right))):
-            sorted_list.append(list_left[i])
-            sorted_list.append(list_right[j])
-
-        return sorted_list
+        return sorted(glob(directory))
 
     except:
         raise
@@ -112,7 +93,7 @@ def resize_images(width, height, data):
         x = []
         y = []
 
-        for i in range(len(data[config.IMAGE_NAME])):
+        for i in range(data.shape[0]):
             image = cv2.imread(data.at[i, config.IMAGE_PATH])
             x.append(cv2.resize(image, (width, height)))
             y.append(data.at[i, config.TARGET])
