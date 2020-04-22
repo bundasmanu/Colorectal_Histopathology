@@ -2,6 +2,8 @@ WIDTH = 128
 HEIGHT = 128
 CHANNELS = 3
 
+NUMBER_CLASSES = 5
+
 # directories to get images
 INPUT_DIR = 'input'
 IMAGES_ACESS = 'images/*.jpeg'
@@ -11,6 +13,11 @@ TRAIN_LABELS_CSV = 'trainLabels.csv'
 IMAGE_NAME = 'image'
 IMAGE_PATH = 'image_path'
 TARGET = 'level'
+
+# split percentages of data
+VALIDATION_SPLIT = 0.2
+TEST_SPLIT = 0.25
+RANDOM_STATE = 0
 
 MULTIPROCESSING = True
 

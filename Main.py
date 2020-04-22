@@ -3,6 +3,8 @@ from models import AlexNet, VGGNet, Model, ModelFactory
 from models.Strategies_Train import DataAugmentation, Strategy, UnderSampling, OverSampling
 from optimizers import GA, PSO, Optimizer, OptimizerFactory
 import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
 import config
 import config_func
 import os
@@ -37,9 +39,28 @@ def main():
     print(data.info())
     print(data.head(5))
 
-    # subsample data, if if not wanted, the rate 1 should be passed
+    # subsample data, if not wanted, rate 1 should be passed
     data = config_func.get_subsample_of_data(1, data)
     print(data.head(5))
+    print(data.shape)
+    print(data[config.TARGET].value_counts())
+
+    # get pixel data from images and respectives targets
+    X, Y = config_func.resize_images(config.WIDTH, config.HEIGHT, data)
+    print(X.shape)
+    print(Y.shape)
+
+    # STRATIFY X_TEST, X_VAL AND X_TEST
+    X_train, X_val, y_train, y_val = train_test_split(X, Y, test_size=config.VALIDATION_SPLIT, shuffle=True,
+                                                      random_state=config.RANDOM_STATE)
+
+    X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=config.TEST_SPLIT,
+                                                        shuffle=True, random_state=config.RANDOM_STATE)
+
+    print(X_train.shape)
+    print(pd.value_counts(y_train))
+    print(X_val.shape)
+    print(X_test.shape)
 
     return None
 

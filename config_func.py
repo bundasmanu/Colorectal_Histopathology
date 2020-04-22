@@ -12,6 +12,7 @@ from keras.models import Model as mp
 from keras.layers import Input, Average
 import cv2
 from exceptions import CustomError
+import pandas as pd
 
 def getImages(directory):
 
@@ -82,17 +83,14 @@ def get_subsample_of_data(percentage, data):
         if percentage == 0.0:
             raise
 
-        # get list with number values per class
-        samples_by_class = data[config.TARGET].value_counts()
+        # new subsample
+        subsample = pd.DataFrame()
 
-        # get percentage per class
-        perc_by_class = samples_by_class / data.shape[0]
-
-        # number of rows on new subsample DataFrame
-        number_rows = data.shape * percentage
-
-        # select random indices by each class
-        subsample = data.sample(n=number_rows, weights=perc_by_class)
+        # get % of rows for each class
+        for i in range(config.NUMBER_CLASSES):
+            query = "{} == {} ".format(config.TARGET, i)
+            sub = data.query(query).sample(frac=percentage, replace=False)
+            subsample = subsample.append(sub, ignore_index=True)
 
         return subsample
 
