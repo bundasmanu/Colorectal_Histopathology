@@ -43,7 +43,7 @@ class Model(ABC):
         '''
         https://refactoring.guru/design-patterns/template-method/python/example
         THIS FUNCTION REPRESENTS A TEMPLATE PATTERN TO EXECUTE THE ALL SEQUENCE OF JOBS TO DO
-        :param: args: list of integers in logical order to populate cnn and dense layers (filters and neurons)
+        :param: args: list of integers in logical order to populate cnn, dense layers (filters and neurons) and batch size
         :return: Sequential: trained model
         :return: numpy array: model test data predictions
         :return History.history: history of trained model
@@ -79,7 +79,6 @@ class Model(ABC):
 
             predictions = model.predict(
                 x=self.data.X_test,
-                use_multiprocessing=config.MULTIPROCESSING
             )
 
             #CHECK PREDICTIONS OUTPUT WITH REAL TARGETS

@@ -2,12 +2,14 @@ from exceptions import CustomError
 from models import AlexNet, VGGNet, Model, ModelFactory
 from models.Strategies_Train import DataAugmentation, Strategy, UnderSampling, OverSampling
 from optimizers import GA, PSO, Optimizer, OptimizerFactory
+import Data
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 import config
 import config_func
 import os
+os.environ["CUDA_VISIBLE_DEVICES"]="-1"  #THIS LINE DISABLES GPU OPTIMIZATION
 
 def main():
 
@@ -69,12 +71,118 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=config.TEST_SPLIT,
                                                         shuffle=True, random_state=config.RANDOM_STATE)
 
-    print(X_train.shape)
-    print(pd.value_counts(y_train))
-    print(X_val.shape)
-    print(X_test.shape)
+    # normalization of data
+    X_train, X_val, X_test = config_func.normalize(X_train, X_val, X_test)
 
-    return None
+    # one-hot encoding targets
+    y_train, y_val, y_test = config_func.one_hot_encoding(y_train=y_train, y_val=y_val, y_test=y_test)
+
+    print("\n###############################################################")
+    print("##########################CLASSIFICATION#######################")
+    print("###############################################################\n")
+
+    # creation of Data instance
+    data_obj = Data.Data(X_train=X_train, X_val=X_val, X_test=X_test,
+                         y_train=y_train, y_val=y_val, y_test=y_test)
+
+    # creation of Factory model's instance
+    model_factory = ModelFactory.ModelFactory()
+
+    # creation of Factory optimization algorithms instance
+    optimization_factory = OptimizerFactory.OptimizerFactory()
+
+    # definition of train strategies instances
+    undersampling = UnderSampling.UnderSampling()
+    oversampling = OverSampling.OverSampling()
+    data_augment = DataAugmentation.DataAugmentation()
+
+    ## ---------------------------ALEXNET APPLICATION ------------------------------------
+
+    # number of conv layers and dense respectively
+    alex_number_layers = (
+        5,
+        1
+    )
+
+    # creation of AlexNet instance
+    alexNet = model_factory.getModel(config.ALEX_NET, data_obj, *alex_number_layers)
+
+    # apply strategies to alexNet
+    #alexNet.addStrategy(data_augment)
+
+    # definition of args to pass to template_method (conv's number of filters, dense neurons and batch size)
+    cnn_layers_filters = (48, 48, 64, 64, 72, 96)
+    dense_layers_neurons = (16, )
+    batch_size = (config.BATCH_SIZE_ALEX_AUG, )
+    alex_args = (
+        cnn_layers_filters + dense_layers_neurons + batch_size
+    )
+
+    # apply build, train and predict
+    model, predictions, history = alexNet.template_method(*alex_args)
+
+    # print final results
+    config_func.print_final_results(y_test=data_obj.y_test, predictions=predictions,
+                                    history=history, dict=True)
+
+    ## ---------------------------VGGNET APPLICATION ------------------------------------
+
+    # number of conv layers and dense respectively
+    vgg_number_layers = (
+        5,
+        1
+    )
+
+    # creation of VGGNet instance
+    vggnet = model_factory.getModel(config.VGG_NET, data_obj, *vgg_number_layers)
+
+    # apply strategies to vggnet
+    #vggnet.addStrategy(data_augment)
+
+    # definition of args to pass to template_method (conv's number of filters, dense neurons and batch size)
+    cnn_layers_filters = (64, 64, 64, 72, 96)
+    dense_layers_neurons = (16, )
+    batch_size = (config.BATCH_SIZE_ALEX_AUG, )
+    vgg_args = (
+        cnn_layers_filters + dense_layers_neurons + batch_size
+    )
+
+    # apply build, train and predict
+    #model, predictions, history = vggnet.template_method(*vgg_args)
+
+    # print final results
+    '''config_func.print_final_results(y_test=data_obj.y_test, predictions=predictions,
+                                    history=history, dict=True)'''
+
+    ## ---------------------------RESNET APPLICATION ------------------------------------
+
+    # number of conv and dense layers respectively
+    number_cnn_dense = (9, 0)
+
+    # creation of ResNet instance
+    resnet = model_factory.getModel(config.RES_NET, data_obj, *number_cnn_dense)
+
+    # apply strategies to resnet
+    resnet.addStrategy(data_augment)
+
+    # definition of args to pass to template_method (conv's number of filters, dense neurons and batch size)
+    initial_conv = (24,)
+    conv2_stage = (24, 36)
+    conv3_stage = (36, 48)
+    conv4_stage = (48, 64)
+    conv5_stage = (64, 200)
+    batch_size = (config.BATCH_SIZE_ALEX_AUG,)
+    resnet_args = (
+            initial_conv + conv2_stage + conv3_stage +
+            conv4_stage + conv5_stage + batch_size
+    )
+
+    # apply build, train and predict
+    #model, predictions, history = resnet.template_method(*resnet_args)
+
+    # print final results
+    '''config_func.print_final_results(y_test=data_obj.y_test, predictions=predictions,
+                                    history=history, dict=False)'''
 
 if __name__ == "__main__":
     main()

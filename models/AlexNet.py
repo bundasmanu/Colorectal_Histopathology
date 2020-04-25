@@ -10,9 +10,10 @@ from typing import Tuple
 import Data
 from keras import regularizers
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping
+from models.Strategies_Train import DataAugmentation
 import config_func
 from sklearn.utils import class_weight
-import numpy
+import numpy as np
 
 class AlexNet(Model.Model):
 
@@ -40,7 +41,61 @@ class AlexNet(Model.Model):
                 raise CustomError.ErrorCreationModel(config.ERROR_INVALID_NUMBER_ARGS)
 
             model = Sequential()
-            ##COMPLETE MODEL
+
+            input_shape = (config.WIDTH, config.HEIGHT, config.CHANNELS)
+            model.add(Conv2D(filters=args[0], kernel_size=(3,3), strides=1, input_shape=input_shape,
+                             kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(MaxPooling2D(pool_size=(2,2), strides=2))
+            model.add(BatchNormalization())
+            model.add(Dropout(0.25))
+
+            model.add(Conv2D(filters=args[1], kernel_size=(3,3), strides=1, kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(MaxPooling2D(pool_size=(2,2), strides=2))
+            model.add(BatchNormalization())
+            model.add(Dropout(0.25))
+
+            model.add(Conv2D(filters=args[2], kernel_size=(3,3), strides=1, padding=config.VALID_PADDING, kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(MaxPooling2D(pool_size=(2,2), strides=2))
+            model.add(BatchNormalization())
+            model.add(Dropout(0.25))
+
+            model.add(Conv2D(filters=args[3], kernel_size=(3,3), strides=1, kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(Conv2D(filters=args[3], kernel_size=(3,3), strides=1, kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(MaxPooling2D(pool_size=(2,2), strides=2))
+            model.add(BatchNormalization())
+            model.add(Dropout(0.25))
+
+            model.add(Conv2D(filters=args[4], kernel_size=(3,3), strides=1, padding=config.SAME_PADDING, kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(Conv2D(filters=args[4], kernel_size=(3,3), strides=1, padding=config.SAME_PADDING, kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(MaxPooling2D(pool_size=(2,2), strides=2))
+            model.add(BatchNormalization())
+            model.add(Dropout(0.25))
+
+            model.add(Conv2D(filters=args[5], kernel_size=(3,3), strides=1, padding=config.SAME_PADDING, kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(Conv2D(filters=args[5], kernel_size=(3,3), strides=1, padding=config.SAME_PADDING, kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(MaxPooling2D(pool_size=(2,2), strides=2))
+            model.add(BatchNormalization())
+            model.add(Dropout(0.25))
+
+            model.add(Flatten())
+
+            model.add(Dense(units=args[6], kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(BatchNormalization())
+
+            model.add(Dense(units=config.NUMBER_CLASSES))
+            model.add(Activation(config.SOFTMAX_FUNCTION))
+            model.summary()
+
             return model
 
         except:
@@ -59,42 +114,66 @@ class AlexNet(Model.Model):
 
             if model is None:
                 raise CustomError.ErrorCreationModel(config.ERROR_NO_MODEL)
-                return None
 
             # OPTIMIZER
             opt = Adam(learning_rate=config.LEARNING_RATE, decay=config.DECAY)
 
             # COMPILE
-            model.compile(optimizer=opt, loss=config.LOSS_BINARY, metrics=[config.ACCURACY_METRIC])
+            model.compile(optimizer=opt, loss=config.LOSS_CATEGORICAL, metrics=[config.ACCURACY_METRIC])
 
             #GET STRATEGIES RETURN DATA, AND IF DATA_AUGMENTATION IS APPLIED TRAIN GENERATOR
             train_generator = None
 
-            if len(self.StrategyList) == 0: #IF USER DOESN'T PRETEND EITHER UNDERSAMPLING AND OVERSAMPLING
-                X_train = self.data.X_train
-                y_train = self.data.y_train
+            # get data
+            X_train = self.data.X_train
+            y_train = self.data.y_train
 
-            else: #USER WANTS AT LEAST UNDERSAMPLING OR OVERSAMPLING
-                X_train, y_train = self.StrategyList[0].applyStrategy(self.data)
-                if len(self.StrategyList) > 1: #USER CHOOSE DATA AUGMENTATION OPTION
-                    train_generator = self.StrategyList[1].applyStrategy(self.data)
+            if self.StrategyList: # if strategylist is not empty
+                for i, j in zip(self.StrategyList, range(len(self.StrategyList))):
+                    if isinstance(i, DataAugmentation.DataAugmentation):
+                        train_generator = self.StrategyList[j].applyStrategy(self.data)
+                    else:
+                        X_train, y_train = self.StrategyList[j].applyStrategy(self.data)
 
-            ## CALLBACKS
-            ## OPTIMIZER
-            ## COMPILE
+            es_callback = EarlyStopping(monitor=config.VALIDATION_LOSS, patience=6)
+            decrease_callback = ReduceLROnPlateau(monitor=config.LOSS,
+                                                        patience=1,
+                                                        factor=0.7,
+                                                        mode='min',
+                                                        verbose=1,
+                                                        min_lr=0.000001)
+            decrease_callback2 = ReduceLROnPlateau(monitor=config.VALIDATION_LOSS,
+                                                        patience=1,
+                                                        factor=0.7,
+                                                        mode='min',
+                                                        verbose=1,
+                                                        min_lr=0.000001)
 
             if train_generator is None: #NO DATA AUGMENTATION
 
                 history = model.fit(
-                    #NEED TO BE COMPLETED
+                    x=X_train,
+                    y=y_train,
+                    batch_size=args[0],
+                    epochs=config.EPOCHS,
+                    validation_data=(self.data.X_val, self.data.y_val),
+                    shuffle=True,
+                    callbacks=[es_callback, decrease_callback, decrease_callback2],
+                    #class_weight=config.class_weights
                 )
 
                 return history, model
 
             #ELSE APPLY DATA AUGMENTATION
-
             history = model.fit_generator(
-                # NEED TO BE COMPLETED
+                generator=train_generator,
+                validation_data=(self.data.X_val, self.data.y_val),
+                epochs=config.EPOCHS,
+                steps_per_epoch=X_train.shape[0] / args[0],
+                shuffle=True,
+                #class_weight=config.class_weights,
+                verbose=1,
+                callbacks=[es_callback, decrease_callback, decrease_callback2]
             )
 
             return history, model

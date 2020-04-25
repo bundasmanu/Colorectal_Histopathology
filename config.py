@@ -3,6 +3,7 @@ HEIGHT = 150
 CHANNELS = 3
 
 NUMBER_CLASSES = 8
+STANDARDIZE_AXIS_CHANNELS = (0,1,2,3)
 
 # directories to get images
 INPUT_DIR = 'input'
@@ -29,16 +30,57 @@ VALIDATION_SPLIT = 0.2
 TEST_SPLIT = 0.25
 RANDOM_STATE = 0
 
-MULTIPROCESSING = True
-
 X_VAL_ARGS = "X_Val"
 Y_VAL_ARGS = "y_val"
 
+# model type str
+ALEX_NET = "ALEXNET"
+VGG_NET = "VGGNET"
+RES_NET = "RESNET"
+
+# activation functions
+RELU_FUNCTION = "relu"
+SOFTMAX_FUNCTION = "softmax"
+SIGMOID_FUNCTION = "sigmoid"
+
+# padding types
+VALID_PADDING = "valid"
+SAME_PADDING = "same"
+
+# regularization and train optimizer parameters
+LEARNING_RATE = 0.01
+DECAY = 1e-6
+
+# train function's of loss
+LOSS_BINARY = "binary_crossentropy"
+LOSS_CATEGORICAL = "categorical_crossentropy"
+
+# train metrics
+ACCURACY_METRIC = "accuracy"
+VALIDATION_ACCURACY = "val_accuracy"
+LOSS = "loss"
+VALIDATION_LOSS = "val_loss"
+
+# optimizer type str
 PSO_OPTIMIZER = "PSO"
 GA_OPTIMIZER = "GA"
 
-ALEX_NET = "ALEXNET"
-VGG_NET = "VGGNET"
+# train parameters
+BATCH_SIZE_ALEX_NO_AUG = 16
+BATCH_SIZE_ALEX_AUG = 16
+EPOCHS = 20
+MULTIPROCESSING = True
+SHUFFLE = True
+GLOROT_SEED = 0
+
+# data augmentation options
+HORIZONTAL_FLIP = True
+VERTICAL_FLIP = True
+WIDTH_SHIFT_RANGE = 0.1
+HEIGHT_SHIFT_RANGE = 0.1
+ROTATION_RANGE = 10
+ZOOM_RANGE = 0.25
+BRITNESS_RANGE= 0.3
 
 #EXCEPTIONS MESSAGES
 ERROR_MODEL_EXECUTION = "\nError on model execution"
@@ -60,8 +102,7 @@ ERROR_ON_SUBSAMPLING = "\n Error on subsampling, percentage invalid"
 WARNING_SUBSAMPLING = "\nIf you want to subsampling data, please pass a value >0 and <1"
 
 #PSO OPTIONS
-TOPOLOGY_FLAG = 0
-PARTICLES = 1
+PARTICLES = 2
 ITERATIONS = 2
 PSO_DIMENSIONS = 5
 TOPOLOGY_FLAG = 0 # 0 MEANS GBEST, AND 1 MEANS LBEST
@@ -73,3 +114,27 @@ TOURNAMENT_SIZE = 100
 INDPB = 0.6
 CXPB = 0.4
 MUTPB = 0.2
+
+# dict with target's name, for print confusion matrix
+DICT_TARGETS = (
+    'STROMA' ,
+    'TUMOR' ,
+    'MUCOSA' ,
+    'EMPTY' ,
+    'LYMPHO' ,
+    'ADIPOSE',
+    'COMPLEX',
+    'DEBRIS'
+)
+
+# classes weights
+class_weights={
+    0: 2.0, # stroma
+    1: 1.5, # tumor
+    2: 1.5, # mucosa
+    3: 3.0, # empty
+    4: 3.0, # lympho
+    5: 1.0, # adipose
+    6: 1.0, # complex
+    7: 1.0  # debris
+}

@@ -11,7 +11,7 @@ from keras.callbacks import ReduceLROnPlateau, EarlyStopping
 from sklearn.utils import class_weight
 import config_func
 import numpy
-from .Strategies_Train import Strategy
+from .Strategies_Train import Strategy, DataAugmentation
 from keras import regularizers
 
 class VGGNet(Model.Model):
@@ -40,13 +40,82 @@ class VGGNet(Model.Model):
                 raise CustomError.ErrorCreationModel(config.ERROR_INVALID_NUMBER_ARGS)
 
             model = Sequential()
-            ## MODEL NEEED TO BE COMPLETED
+
+            input_shape = (config.WIDTH, config.HEIGHT, config.CHANNELS)
+            model.add(Conv2D(filters=args[0], input_shape=input_shape, kernel_size=(5, 5),
+                            kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(Conv2D(filters=args[0], kernel_size=(3, 3),
+                             kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
+            model.add(BatchNormalization())
+            model.add(Dropout(0.15))
+
+            model.add(Conv2D(filters=args[1], kernel_size=(3, 3),
+                             kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(Conv2D(filters=args[1], kernel_size=(3, 3),
+                             kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
+            model.add(BatchNormalization())
+            model.add(Dropout(0.15))
+
+            model.add(Conv2D(filters=args[2], kernel_size=(3, 3),
+                            kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(Conv2D(filters=args[2], kernel_size=(3, 3),
+                             kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
+            model.add(BatchNormalization())
+            model.add(Dropout(0.25))
+
+            model.add(Conv2D(filters=args[3], kernel_size=(3, 3),
+                             kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(Conv2D(filters=args[3], kernel_size=(3, 3),
+                             kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
+            model.add(BatchNormalization())
+            model.add(Dropout(0.25))
+
+            model.add(Conv2D(filters=args[4], kernel_size=(3, 3), padding=config.SAME_PADDING,
+                             kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(Conv2D(filters=args[4], kernel_size=(3, 3), padding=config.SAME_PADDING,
+                             kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
+            model.add(BatchNormalization())
+            model.add(Dropout(0.25))
+
+            model.add(Flatten())
+
+            model.add(Dense(units=args[5], kernel_regularizer=regularizers.l2(config.DECAY)))
+            model.add(Activation(config.RELU_FUNCTION))
+            model.add(BatchNormalization())
+            model.add(Dropout(0.3))
+
+            model.add(Dense(units=config.NUMBER_CLASSES))
+            model.add(Activation(config.SOFTMAX_FUNCTION))
+            model.summary()
+
             return model
 
         except:
             raise CustomError.ErrorCreationModel(config.ERROR_ON_BUILD)
 
     def train(self, model : Sequential, *args) -> Tuple[History, Sequential]:
+
+        '''
+        THIS FUNCTION IS RESPONSIBLE FOR MAKE THE TRAINING OF MODEL
+        :param model: Sequential model builded before, or passed (already trained model)
+        :return: Sequential model --> trained model
+        :return: History.history --> train and validation loss and metrics variation along epochs
+        '''
 
         try:
 
@@ -57,36 +126,61 @@ class VGGNet(Model.Model):
             opt = Adam(learning_rate=config.LEARNING_RATE, decay=config.DECAY)
 
             # COMPILE
-            model.compile(optimizer=opt, loss=config.LOSS_BINARY, metrics=[config.ACCURACY_METRIC])
+            model.compile(optimizer=opt, loss=config.LOSS_CATEGORICAL, metrics=[config.ACCURACY_METRIC])
 
-            #GET STRATEGIES RETURN DATA, AND IF DATA_AUGMENTATION IS APPLIED TRAIN GENERATOR
+            # GET STRATEGIES RETURN DATA, AND IF DATA_AUGMENTATION IS APPLIED TRAIN GENERATOR
             train_generator = None
 
-            if len(self.StrategyList) == 0: #IF USER DOESN'T PRETEND EITHER UNDERSAMPLING AND OVERSAMPLING
-                X_train = self.data.X_train
-                y_train = self.data.y_train
+            # get data
+            X_train = self.data.X_train
+            y_train = self.data.y_train
 
-            else: #USER WANTS AT LEAST UNDERSAMPLING OR OVERSAMPLING
-                X_train, y_train = self.StrategyList[0].applyStrategy(self.data)
-                if len(self.StrategyList) > 1: #USER CHOOSE DATA AUGMENTATION OPTION
-                    train_generator = self.StrategyList[1].applyStrategy(self.data)
+            if self.StrategyList:  # if strategylist is not empty
+                for i, j in zip(self.StrategyList, range(len(self.StrategyList))):
+                    if isinstance(i, DataAugmentation.DataAugmentation):
+                        train_generator = self.StrategyList[j].applyStrategy(self.data)
+                    else:
+                        X_train, y_train = self.StrategyList[j].applyStrategy(self.data)
 
-            ## CALLBACKS
-            ## OPTIMIZER
-            ## COMPILE
+            es_callback = EarlyStopping(monitor=config.VALIDATION_LOSS, patience=3)
+            decrease_callback = ReduceLROnPlateau(monitor=config.LOSS,
+                                                  patience=1,
+                                                  factor=0.7,
+                                                  mode='min',
+                                                  verbose=1,
+                                                  min_lr=0.000001)
+            decrease_callback2 = ReduceLROnPlateau(monitor=config.VALIDATION_LOSS,
+                                                   patience=1,
+                                                   factor=0.7,
+                                                   mode='min',
+                                                   verbose=1,
+                                                   min_lr=0.000001)
 
-            if train_generator is None: #NO DATA AUGMENTATION
+            if train_generator is None:  # NO DATA AUGMENTATION
 
                 history = model.fit(
-                    # NEED TO BE COMPLETED
+                    x=X_train,
+                    y=y_train,
+                    batch_size=args[0],
+                    epochs=config.EPOCHS,
+                    validation_data=(self.data.X_val, self.data.y_val),
+                    shuffle=True,
+                    callbacks=[es_callback, decrease_callback, decrease_callback2],
+                    # class_weight=config.class_weights
                 )
 
                 return history, model
 
-            #ELSE APPLY DATA AUGMENTATION
-
+            # ELSE APPLY DATA AUGMENTATION
             history = model.fit_generator(
-                # NEED TO BE COMPLETED
+                generator=train_generator,
+                validation_data=(self.data.X_val, self.data.y_val),
+                epochs=config.EPOCHS,
+                steps_per_epoch=X_train.shape[0] / args[0],
+                shuffle=True,
+                # class_weight=config.class_weights,
+                verbose=1,
+                callbacks=[es_callback, decrease_callback, decrease_callback2]
             )
 
             return history, model

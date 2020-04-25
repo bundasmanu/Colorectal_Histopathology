@@ -1,6 +1,6 @@
 from . import Model
 import Data
-from .Strategies_Train import Strategy
+from .Strategies_Train import Strategy, DataAugmentation
 from exceptions import CustomError
 import config
 import config_func
@@ -177,7 +177,6 @@ class ResNet(Model.Model):
 
             if model is None:
                 raise CustomError.ErrorCreationModel(config.ERROR_NO_MODEL)
-                return None
 
             # OPTIMIZER
             opt = Adam(learning_rate=config.LEARNING_RATE, decay=config.DECAY)
@@ -185,33 +184,35 @@ class ResNet(Model.Model):
             # COMPILE
             model.compile(optimizer=opt, loss=config.LOSS_CATEGORICAL, metrics=[config.ACCURACY_METRIC])
 
-            # GET STRATEGIES RETURN DATA, AND IF DATA_AUGMENTATION IS APPLIED TRAIN GENERATOR
+            #GET STRATEGIES RETURN DATA, AND IF DATA_AUGMENTATION IS APPLIED TRAIN GENERATOR
             train_generator = None
 
-            if len(self.StrategyList) == 0:  # IF USER DOESN'T PRETEND EITHER UNDERSAMPLING AND OVERSAMPLING
-                X_train = self.data.X_train
-                y_train = self.data.y_train
+            # get data
+            X_train = self.data.X_train
+            y_train = self.data.y_train
 
-            else:  # USER WANTS AT LEAST UNDERSAMPLING OR OVERSAMPLING
-                X_train, y_train = self.StrategyList[0].applyStrategy(self.data)
-                if len(self.StrategyList) > 1:  # USER CHOOSE DATA AUGMENTATION OPTION
-                    train_generator = self.StrategyList[1].applyStrategy(self.data)
+            if self.StrategyList: # if strategylist is not empty
+                for i, j in zip(self.StrategyList, range(len(self.StrategyList))):
+                    if isinstance(i, DataAugmentation.DataAugmentation):
+                        train_generator = self.StrategyList[j].applyStrategy(self.data)
+                    else:
+                        X_train, y_train = self.StrategyList[j].applyStrategy(self.data)
 
-            es_callback = EarlyStopping(monitor='val_loss', patience=4)
-            decrease_callback = ReduceLROnPlateau(monitor='val_loss',
-                                                  patience=2,
-                                                  factor=0.7,
-                                                  mode='min',
-                                                  verbose=1,
-                                                  min_lr=0.000001)
+            es_callback = EarlyStopping(monitor=config.VALIDATION_LOSS, patience=8)
+            decrease_callback = ReduceLROnPlateau(monitor=config.LOSS,
+                                                        patience=1,
+                                                        factor=0.7,
+                                                        mode='min',
+                                                        verbose=1,
+                                                        min_lr=0.000001)
+            decrease_callback2 = ReduceLROnPlateau(monitor=config.VALIDATION_LOSS,
+                                                        patience=1,
+                                                        factor=0.7,
+                                                        mode='min',
+                                                        verbose=1,
+                                                        min_lr=0.000001)
 
-            # CLASS WEIGHTS
-            weights_y_train = config_func.decode_array(y_train)
-            class_weights = class_weight.compute_class_weight('balanced',
-                                                              numpy.unique(weights_y_train),
-                                                              weights_y_train)
-
-            if train_generator is None:  # NO DATA AUGMENTATION
+            if train_generator is None: #NO DATA AUGMENTATION
 
                 history = model.fit(
                     x=X_train,
@@ -220,23 +221,22 @@ class ResNet(Model.Model):
                     epochs=config.EPOCHS,
                     validation_data=(self.data.X_val, self.data.y_val),
                     shuffle=True,
-                    callbacks=[es_callback, decrease_callback],
-                    class_weight=class_weights
+                    callbacks=[es_callback, decrease_callback, decrease_callback2],
+                    #class_weight=config.class_weights
                 )
 
                 return history, model
 
-            # ELSE APPLY DATA AUGMENTATION
-
+            #ELSE APPLY DATA AUGMENTATION
             history = model.fit_generator(
                 generator=train_generator,
                 validation_data=(self.data.X_val, self.data.y_val),
                 epochs=config.EPOCHS,
                 steps_per_epoch=X_train.shape[0] / args[0],
                 shuffle=True,
-                class_weight=class_weights,
+                #class_weight=config.class_weights,
                 verbose=1,
-                callbacks=[es_callback, decrease_callback]
+                callbacks=[es_callback, decrease_callback, decrease_callback2]
             )
 
             return history, model

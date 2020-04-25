@@ -155,8 +155,8 @@ def one_hot_encoding(y_train, y_val, y_test):
     try:
 
         y_train = keras.utils.to_categorical(y_train, config.NUMBER_CLASSES)
-        y_val =  keras.utils.to_categorical(y_val, config.NUMBER_CLASSES)
-        y_test =  keras.utils.to_categorical(y_test, config.NUMBER_CLASSES)
+        y_val = keras.utils.to_categorical(y_val, config.NUMBER_CLASSES)
+        y_test = keras.utils.to_categorical(y_test, config.NUMBER_CLASSES)
 
         return y_train, y_val, y_test
 
