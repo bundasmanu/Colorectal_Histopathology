@@ -11,10 +11,22 @@ import matplotlib.pyplot as plt
 import config_func
 from pyswarms.utils.plotters.formatters import Designer
 from IPython.display import Image
+from keras import backend as K
+import gc
 
 class PSO(Optimizer.Optimizer):
 
     def __init__(self, model : Model.Model, *args): #DIMENSIONS NEED TO BE EQUAL TO NUMBER OF LAYERS ON MODEL
+        '''
+        :param args:
+            - individuals: integer --> number of particles
+            - dimensions: integer --> number dimensions of problems (number hyperparameters to optimize)
+            - iterations: integer --> number of iterations
+            - limit_super: numpy array --> array with max values for each dimension of problem (dimensions, )
+                * if user needs to use lower_limit for dimensions different from 1,
+                    needs to override __init__, and after that needs to override boundsDefinition method
+        '''
+        self.limit_super = args[-1]  # last argument
         super(PSO, self).__init__(model, *args)
 
     def plotCostHistory(self, optimizer):
@@ -69,11 +81,14 @@ class PSO(Optimizer.Optimizer):
 
         try:
 
-            ## EXAMPLE BOUNDS DEFINITION, USER CAN DEFINE OUR OWN BOUNDS
             totalDimensions = self.dims
 
             minBounds = np.ones(totalDimensions)
+            minBounds[totalDimensions - 1] = minBounds[totalDimensions - 1] * config.MIN_BATCH_SIZE  # min batch size
             maxBounds = np.ones(totalDimensions)
+
+            maxBounds = [maxBounds[j] * i for i, j in zip(self.limit_super, range(totalDimensions))]
+            maxBounds = np.array(maxBounds)
 
             bounds = (minBounds, maxBounds)
 
@@ -83,7 +98,16 @@ class PSO(Optimizer.Optimizer):
             raise
 
     def objectiveFunction(self, acc, *args):
-        ## USER CAN DEFINE HERE OR CALL PARENT OBJECTIVE FUNCTION
+
+        '''
+        Concrete objective function of PSO object --> can override or not Parent function
+        :param acc: float --> model accuracy
+        :param args: first argument is a Keras Model
+                    last argument is a confusion matrix
+                    * if user needs can pass more arguments
+        :return: float --> particle cost, on a given iteration
+        '''
+
         return super(PSO, self).objectiveFunction(acc, *args)
 
     def loopAllParticles(self, particles):
@@ -91,19 +115,26 @@ class PSO(Optimizer.Optimizer):
         '''
         THIS FUNCTION APPLIES PARTICLES ITERATION, EXECUTION CNN MODEL
         :param particles: numpy array of shape (nParticles, dimensions)
-        :return: list: all losses returned along all particles iteration
+        :return: list of floats: costs of particles in a given iteration (nParticles, )
         '''
 
         try:
 
             losses = []
             for i in range(particles.shape[0]):
+                config_func.print_log_message()
                 int_converted_values = [math.trunc(i) for i in particles[i]] #CONVERSION OF DIMENSION VALUES OF PARTICLE
                 model, predictions, history = self.model.template_method(*int_converted_values) #APPLY BUILD, TRAIN AND PREDICT MODEL OPERATIONS, FOR EACH PARTICLE AND ITERATION
-                acc = (self.model.data.y_test == predictions).mean() #CHECK FINAL ACCURACY OF MODEL PREDICTIONS
-                ## CALL OBJETIVE FUNCTION AND APPEND ALL LOSSES FROM ALL PARTICLES IN ALL ITERATION
-                ## ATTENTION --> ACC AND INT_CONVERTED_VALUES ARE ONLY EXAMPLES USER NEED TO DEFINED HIS NEEDS
-                losses.append(self.objectiveFunction(acc, *int_converted_values)) #ADD COST LOSS TO LIST
+                decoded_predictions = config_func.decode_array(predictions)
+                decoded_y_true = config_func.decode_array(self.model.data.y_test)
+                report, conf = config_func.getConfusionMatrix(decoded_predictions, decoded_y_true, dict=True)
+                acc = report['accuracy']# i can't compare y_test and predict, because some classes may have been unclassified
+                # define args to pass to objective function
+                obj_args = (model, report)
+                losses.append(self.objectiveFunction(acc, *obj_args)) #ADD COST LOSS TO LIST
+                K.clear_session()
+                gc.collect()
+                del model
             return losses
 
         except:

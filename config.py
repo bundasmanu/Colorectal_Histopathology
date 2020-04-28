@@ -1,3 +1,10 @@
+import numpy as np
+import itertools
+
+# global counter
+counter_iterations = itertools.count(start=0, step=1)
+
+# image dimensions
 WIDTH = 150
 HEIGHT = 150
 CHANNELS = 3
@@ -48,7 +55,7 @@ VALID_PADDING = "valid"
 SAME_PADDING = "same"
 
 # regularization and train optimizer parameters
-LEARNING_RATE = 0.01
+LEARNING_RATE = 0.001
 DECAY = 1e-6
 
 # train function's of loss
@@ -107,7 +114,7 @@ ITERATIONS = 2
 PSO_DIMENSIONS = 5
 TOPOLOGY_FLAG = 0 # 0 MEANS GBEST, AND 1 MEANS LBEST
 gbestOptions = {'w' : 0.9, 'c1' : 0.3, 'c2' : 0.3}
-lbestOptions = {'w' : 0.9, 'c1' : 0.3, 'c2' : 0.3, 'k' : 4, 'p' : 2}
+lbestOptions = {'w' : 0.9, 'c1' : 0.3, 'c2' : 0.3, 'k' : 4, 'p' : 2} # p =2, means euclidean distance
 
 #GA OPTIONS
 TOURNAMENT_SIZE = 100
@@ -129,12 +136,54 @@ DICT_TARGETS = (
 
 # classes weights
 class_weights={
-    0: 2.0, # stroma
-    1: 1.5, # tumor
-    2: 1.5, # mucosa
-    3: 3.0, # empty
-    4: 3.0, # lympho
+    0: 3.0, # stroma
+    1: 1.2, # tumor
+    2: 1.2, # mucosa
+    3: 1.0, # empty
+    4: 1.2, # lympho
     5: 1.0, # adipose
-    6: 1.0, # complex
-    7: 1.0  # debris
+    6: 3.0, # complex
+    7: 2.0  # debris
 }
+
+# PSO BOUNDS LIMITS --> (needs to be readjusted, in coherence with this specific problem, and with computational costs)
+MAX_VALUES_LAYERS_ALEX_NET = [196, 196, 196, 256, 256, 128, 80] # 6 convs, 1 dense and batch size
+MAX_VALUES_LAYERS_VGG_NET = [196, 196, 196, 196, 256, 128, 80] # 5 convs, 1 dense and batch_size
+MAX_VALUES_LAYERS_RESNET_NET = [128, 128, 128, 196, 196, 196, 196, 256, 256, 80] ## 8 convs and batch size
+MIN_BATCH_SIZE = 16
+
+# weights model files
+VGG_NET_WEIGHTS_FILE = 'vggnet_weights.h5'
+ALEX_NET_WEIGHTS_FILE = 'alexnet_weights.h5'
+RES_NET_WEIGHTS_FILE = 'resnet_weights.h5'
+
+# filename position particles along iterations (.html file)
+PSO_POSITION_ITERS = 'pos_iters.html'
+
+# variables that are used in plot positions of particles along iterations
+X_LIMITS = [1, 128]
+Y_LIMITS = [1, 128]
+LABEL_X_AXIS = 'Nºfiltros 1ªcamada'
+LABEL_Y_AXIS = 'Nºfiltros 2ªcamada'
+
+# PSO INIT DEFINITIONS --> IN ARGS FORM
+pso_init_args_alex = (
+    PARTICLES,  # number of individuals
+    ITERATIONS,  # iterations
+    7,  # dimensions (5 conv filters, 1 dense neurons and batch size)
+    np.array(MAX_VALUES_LAYERS_ALEX_NET)  # superior bound limits for dimensions
+)
+
+pso_init_args_vgg = (
+    PARTICLES,  # number of individuals
+    ITERATIONS,  # iterations
+    7,  # dimensions (5 conv filters, 1 dense neurons and batch size)
+    np.array(MAX_VALUES_LAYERS_VGG_NET)  # superior bound limits for dimensions
+)
+
+pso_init_args_resnet = (
+    PARTICLES,  # number of individuals
+    ITERATIONS,  # iterations
+    10,  # dimensions (9 conv filters and batch size)
+    np.array(MAX_VALUES_LAYERS_RESNET_NET)  # superior bound limits for dimensions
+)

@@ -50,7 +50,7 @@ class VGGNet(Model.Model):
             model.add(Activation(config.RELU_FUNCTION))
             model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
             model.add(BatchNormalization())
-            model.add(Dropout(0.15))
+            model.add(Dropout(0.25))
 
             model.add(Conv2D(filters=args[1], kernel_size=(3, 3),
                              kernel_regularizer=regularizers.l2(config.DECAY)))
@@ -60,7 +60,7 @@ class VGGNet(Model.Model):
             model.add(Activation(config.RELU_FUNCTION))
             model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
             model.add(BatchNormalization())
-            model.add(Dropout(0.15))
+            model.add(Dropout(0.25))
 
             model.add(Conv2D(filters=args[2], kernel_size=(3, 3),
                             kernel_regularizer=regularizers.l2(config.DECAY)))
@@ -72,32 +72,31 @@ class VGGNet(Model.Model):
             model.add(BatchNormalization())
             model.add(Dropout(0.25))
 
-            model.add(Conv2D(filters=args[3], kernel_size=(3, 3),
-                             kernel_regularizer=regularizers.l2(config.DECAY)))
-            model.add(Activation(config.RELU_FUNCTION))
-            model.add(Conv2D(filters=args[3], kernel_size=(3, 3),
-                             kernel_regularizer=regularizers.l2(config.DECAY)))
-            model.add(Activation(config.RELU_FUNCTION))
-            model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.25))
-
-            model.add(Conv2D(filters=args[4], kernel_size=(3, 3), padding=config.SAME_PADDING,
-                             kernel_regularizer=regularizers.l2(config.DECAY)))
-            model.add(Activation(config.RELU_FUNCTION))
-            model.add(Conv2D(filters=args[4], kernel_size=(3, 3), padding=config.SAME_PADDING,
-                             kernel_regularizer=regularizers.l2(config.DECAY)))
-            model.add(Activation(config.RELU_FUNCTION))
-            model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.25))
+            # model.add(Conv2D(filters=args[3], kernel_size=(3, 3),
+            #                  kernel_regularizer=regularizers.l2(config.DECAY)))
+            # model.add(Activation(config.RELU_FUNCTION))
+            # model.add(Conv2D(filters=args[3], kernel_size=(3, 3),
+            #                  kernel_regularizer=regularizers.l2(config.DECAY)))
+            # model.add(Activation(config.RELU_FUNCTION))
+            # model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
+            # model.add(BatchNormalization())
+            # model.add(Dropout(0.25))
+            #
+            # model.add(Conv2D(filters=args[4], kernel_size=(3, 3), padding=config.SAME_PADDING,
+            #                  kernel_regularizer=regularizers.l2(config.DECAY)))
+            # model.add(Activation(config.RELU_FUNCTION))
+            # model.add(Conv2D(filters=args[4], kernel_size=(3, 3), padding=config.SAME_PADDING,
+            #                  kernel_regularizer=regularizers.l2(config.DECAY)))
+            # model.add(Activation(config.RELU_FUNCTION))
+            # model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
+            # model.add(BatchNormalization())
+            # model.add(Dropout(0.25))
 
             model.add(Flatten())
 
             model.add(Dense(units=args[5], kernel_regularizer=regularizers.l2(config.DECAY)))
             model.add(Activation(config.RELU_FUNCTION))
             model.add(BatchNormalization())
-            model.add(Dropout(0.3))
 
             model.add(Dense(units=config.NUMBER_CLASSES))
             model.add(Activation(config.SOFTMAX_FUNCTION))
@@ -142,7 +141,7 @@ class VGGNet(Model.Model):
                     else:
                         X_train, y_train = self.StrategyList[j].applyStrategy(self.data)
 
-            es_callback = EarlyStopping(monitor=config.VALIDATION_LOSS, patience=3)
+            es_callback = EarlyStopping(monitor=config.VALIDATION_LOSS, patience=4)
             decrease_callback = ReduceLROnPlateau(monitor=config.LOSS,
                                                   patience=1,
                                                   factor=0.7,

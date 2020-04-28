@@ -198,7 +198,7 @@ class ResNet(Model.Model):
                     else:
                         X_train, y_train = self.StrategyList[j].applyStrategy(self.data)
 
-            es_callback = EarlyStopping(monitor=config.VALIDATION_LOSS, patience=8)
+            es_callback = EarlyStopping(monitor=config.VALIDATION_LOSS, patience=4)
             decrease_callback = ReduceLROnPlateau(monitor=config.LOSS,
                                                         patience=1,
                                                         factor=0.7,
@@ -234,7 +234,7 @@ class ResNet(Model.Model):
                 epochs=config.EPOCHS,
                 steps_per_epoch=X_train.shape[0] / args[0],
                 shuffle=True,
-                #class_weight=config.class_weights,
+                class_weight=config.class_weights,
                 verbose=1,
                 callbacks=[es_callback, decrease_callback, decrease_callback2]
             )
