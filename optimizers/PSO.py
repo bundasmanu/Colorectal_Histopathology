@@ -10,7 +10,6 @@ from pyswarms.utils.plotters import plot_cost_history, plot_contour
 import matplotlib.pyplot as plt
 import config_func
 from pyswarms.utils.plotters.formatters import Designer
-from IPython.display import Image
 from keras import backend as K
 import gc
 
@@ -19,15 +18,15 @@ class PSO(Optimizer.Optimizer):
     def __init__(self, model : Model.Model, *args): #DIMENSIONS NEED TO BE EQUAL TO NUMBER OF LAYERS ON MODEL
         '''
         :param args:
-            - individuals: integer --> number of particles
-            - dimensions: integer --> number dimensions of problems (number hyperparameters to optimize)
-            - iterations: integer --> number of iterations
-            - limit_super: numpy array --> array with max values for each dimension of problem (dimensions, )
+            - individuals (Parent attribute): integer --> number of particles
+            - dimensions (Parent attribute): integer --> number dimensions of problems (number hyperparameters to optimize)
+            - iterations (Parent attribute): integer --> number of iterations
+            - limit_super (PSO class attribute): numpy array --> array with max values for each dimension of problem (dimensions, )
                 * if user needs to use lower_limit for dimensions different from 1,
                     needs to override __init__, and after that needs to override boundsDefinition method
         '''
         self.limit_super = args[-1]  # last argument
-        super(PSO, self).__init__(model, *args)
+        super(PSO, self).__init__(model, *args[:-1]) # all args except last one --> last one is limit_super, that is a attribute of PSO concrete class
 
     def plotCostHistory(self, optimizer):
 
@@ -140,11 +139,11 @@ class PSO(Optimizer.Optimizer):
         except:
             raise CustomError.ErrorCreationModel(config.ERROR_ON_OPTIMIZATION)
 
-    def optimize(self) -> Tuple[float, float]:
+    def optimize(self) -> Tuple[float, float, ps.single.general_optimizer.SwarmOptimizer]:
 
         '''
         THIS FUNCTION IS RESPONSIBLE TO APPLY ALL LOGIC OF PSO CNN NETWORK OPTIMIZATION
-        :return: [float, float] --> best cost and best particle position
+        :return: [float, float, SwarmOptimizer] --> best cost, best particle position for each dimension and SwarmOptimizer (Pyswarms object)
         '''
 
         try:
@@ -161,8 +160,7 @@ class PSO(Optimizer.Optimizer):
                                                     options=config.lbestOptions, bounds=bounds)
 
             cost, pos = optimizer.optimize(objective_func=self.loopAllParticles, iters=self.iters)
-            self.plotCostHistory(optimizer)
-            return cost, pos
+            return cost, pos, optimizer
 
         except:
             raise CustomError.ErrorCreationModel(config.ERROR_ON_OPTIMIZATION)

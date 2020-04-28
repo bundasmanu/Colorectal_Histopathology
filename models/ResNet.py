@@ -23,7 +23,7 @@ class ResNet(Model.Model):
         super(ResNet, self).__init__(data, *args)
 
     def addStrategy(self, strategy: Strategy.Strategy) -> bool:
-        super(ResNet, self).addStrategy(strategy=strategy)
+        return super(ResNet, self).addStrategy(strategy=strategy)
 
     def identity_block(self, tensor_input, *args):
 
@@ -234,7 +234,7 @@ class ResNet(Model.Model):
                 epochs=config.EPOCHS,
                 steps_per_epoch=X_train.shape[0] / args[0],
                 shuffle=True,
-                class_weight=config.class_weights,
+                #class_weight=config.class_weights,
                 verbose=1,
                 callbacks=[es_callback, decrease_callback, decrease_callback2]
             )

@@ -75,7 +75,7 @@ GA_OPTIMIZER = "GA"
 # train parameters
 BATCH_SIZE_ALEX_NO_AUG = 16
 BATCH_SIZE_ALEX_AUG = 16
-EPOCHS = 20
+EPOCHS = 1
 MULTIPROCESSING = True
 SHUFFLE = True
 GLOROT_SEED = 0
@@ -105,6 +105,9 @@ ERROR_INVALID_NUMBER_ARGS = "\nPlease provide correct number of args"
 ERROR_ON_BUILD = "\nError on building model"
 ERROR_APPEND_STRATEGY = "\nError on appending strategy"
 ERROR_ON_PLOTTING = "\nError on plotting"
+ERROR_ON_GET_DATA = "\nError on retain X and Y data"
+ERROR_ON_IDENTITY_BLOCK ="\nError on modelling identity block, please check the problem"
+ERROR_ON_CONV_BLOCK ="\nError on modelling convolutional block, please check the problem"
 ERROR_ON_SUBSAMPLING = "\n Error on subsampling, percentage invalid"
 WARNING_SUBSAMPLING = "\nIf you want to subsampling data, please pass a value >0 and <1"
 
@@ -113,8 +116,8 @@ PARTICLES = 2
 ITERATIONS = 2
 PSO_DIMENSIONS = 5
 TOPOLOGY_FLAG = 0 # 0 MEANS GBEST, AND 1 MEANS LBEST
-gbestOptions = {'w' : 0.9, 'c1' : 0.3, 'c2' : 0.3}
-lbestOptions = {'w' : 0.9, 'c1' : 0.3, 'c2' : 0.3, 'k' : 4, 'p' : 2} # p =2, means euclidean distance
+gbestOptions = {'w' : 0.9, 'c1' : 0.7, 'c2' : 0.7}
+lbestOptions = {'w' : 0.9, 'c1' : 0.7, 'c2' : 0.7, 'k' : 4, 'p' : 2} # p =2, means euclidean distance
 
 #GA OPTIONS
 TOURNAMENT_SIZE = 100
