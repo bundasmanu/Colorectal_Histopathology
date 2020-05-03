@@ -70,7 +70,7 @@ def get_subsample_of_data(percentage, data):
         # get % of rows for each class
         for i in range(config.NUMBER_CLASSES):
             query = "{} == {} ".format(config.TARGET, i)
-            sub = data.query(query).sample(frac=percentage, replace=False)
+            sub = data.query(query).sample(frac=percentage, replace=False, random_state=config.RANDOM_STATE)
             subsample = subsample.append(sub, ignore_index=True)
 
         return subsample

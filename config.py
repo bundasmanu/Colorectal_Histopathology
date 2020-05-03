@@ -55,7 +55,7 @@ VALID_PADDING = "valid"
 SAME_PADDING = "same"
 
 # regularization and train optimizer parameters
-LEARNING_RATE = 0.001
+LEARNING_RATE = 0.01
 DECAY = 1e-6
 
 # train function's of loss
@@ -75,7 +75,7 @@ GA_OPTIMIZER = "GA"
 # train parameters
 BATCH_SIZE_ALEX_NO_AUG = 16
 BATCH_SIZE_ALEX_AUG = 16
-EPOCHS = 1
+EPOCHS = 20
 MULTIPROCESSING = True
 SHUFFLE = True
 GLOROT_SEED = 0

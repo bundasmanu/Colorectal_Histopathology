@@ -135,7 +135,7 @@ class AlexNet(Model.Model):
                     else:
                         X_train, y_train = self.StrategyList[j].applyStrategy(self.data)
 
-            es_callback = EarlyStopping(monitor=config.VALIDATION_LOSS, patience=4)
+            es_callback = EarlyStopping(monitor=config.VALIDATION_LOSS, patience=20)
             decrease_callback = ReduceLROnPlateau(monitor=config.LOSS,
                                                         patience=1,
                                                         factor=0.7,
