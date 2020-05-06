@@ -75,7 +75,7 @@ GA_OPTIMIZER = "GA"
 # train parameters
 BATCH_SIZE_ALEX_NO_AUG = 16
 BATCH_SIZE_ALEX_AUG = 16
-EPOCHS = 1
+EPOCHS = 15
 MULTIPROCESSING = True
 SHUFFLE = True
 GLOROT_SEED = 0
@@ -112,8 +112,8 @@ ERROR_ON_SUBSAMPLING = "\n Error on subsampling, percentage invalid"
 WARNING_SUBSAMPLING = "\nIf you want to subsampling data, please pass a value >0 and <1"
 
 #PSO OPTIONS
-PARTICLES = 2
-ITERATIONS = 2
+PARTICLES = 20
+ITERATIONS = 12
 PSO_DIMENSIONS = 5
 TOPOLOGY_FLAG = 0 # 0 MEANS GBEST, AND 1 MEANS LBEST
 gbestOptions = {'w' : 0.9, 'c1' : 0.7, 'c2' : 0.7}
@@ -195,3 +195,7 @@ pso_init_args_resnet = (
     np.array(MIN_VALUES_LAYERS_RES_NET),
     np.array(MAX_VALUES_LAYERS_RESNET_NET)  # superior bound limits for dimensions
 )
+
+## verbose and summary options on build and train
+TRAIN_VERBOSE = 1 # 0 - no info, 1- info, 2- partial info
+BUILD_SUMMARY = 1 # 0 - no summary, 1- summary

@@ -19,3 +19,8 @@
 2020-05-06 00:54:50,794 - pyswarms.single.global_best - INFO - Optimize for 2 iters with {'w': 0.9, 'c1': 0.7, 'c2': 0.7}
 2020-05-06 00:56:22,426 - pyswarms.single.global_best - INFO - Optimize for 2 iters with {'w': 0.9, 'c1': 0.7, 'c2': 0.7}
 2020-05-06 00:57:48,247 - pyswarms.single.global_best - INFO - Optimize for 2 iters with {'w': 0.9, 'c1': 0.7, 'c2': 0.7}
+2020-05-06 14:49:40,652 - pyswarms.single.global_best - INFO - Optimize for 2 iters with {'w': 0.9, 'c1': 0.7, 'c2': 0.7}
+2020-05-06 14:52:06,284 - pyswarms.single.global_best - INFO - Optimize for 2 iters with {'w': 0.9, 'c1': 0.7, 'c2': 0.7}
+2020-05-06 15:03:11,418 - pyswarms.single.global_best - INFO - Optimization finished | best cost: 6.947132506660855, best pos: [135.58563831 164.69155143  19.23759832 128.08612998 109.96104458
+ 138.74265569  36.41914437  48.64554118]
+2020-05-06 15:03:11,630 - matplotlib.animation - INFO - Animation.save using <class 'matplotlib.animation.HTMLWriter'>

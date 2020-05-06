@@ -100,7 +100,9 @@ class VGGNet(Model.Model):
 
             model.add(Dense(units=config.NUMBER_CLASSES))
             model.add(Activation(config.SOFTMAX_FUNCTION))
-            model.summary()
+
+            if config.BUILD_SUMMARY == 1:
+                model.summary()
 
             return model
 
@@ -166,6 +168,7 @@ class VGGNet(Model.Model):
                     shuffle=True,
                     callbacks=[es_callback, decrease_callback, decrease_callback2],
                     # class_weight=config.class_weights
+                    verbose=config.TRAIN_VERBOSE
                 )
 
                 return history, model
@@ -178,7 +181,7 @@ class VGGNet(Model.Model):
                 steps_per_epoch=X_train.shape[0] / args[0],
                 shuffle=True,
                 # class_weight=config.class_weights,
-                verbose=1,
+                verbose=config.TRAIN_VERBOSE,
                 callbacks=[es_callback, decrease_callback, decrease_callback2]
             )
 

@@ -155,7 +155,9 @@ class ResNet(Model.Model):
 
             ## finally model creation
             model = mp(inputs=input_shape, outputs=X)
-            model.summary()
+
+            if config.BUILD_SUMMARY == 1:
+                model.summary()
             # plot_model(model, show_shapes=True, to_file='residual_module.png')
 
             return model
@@ -223,6 +225,7 @@ class ResNet(Model.Model):
                     shuffle=True,
                     callbacks=[es_callback, decrease_callback, decrease_callback2],
                     #class_weight=config.class_weights
+                    verbose=config.TRAIN_VERBOSE
                 )
 
                 return history, model
@@ -235,7 +238,7 @@ class ResNet(Model.Model):
                 steps_per_epoch=X_train.shape[0] / args[0],
                 shuffle=True,
                 #class_weight=config.class_weights,
-                verbose=1,
+                verbose=config.TRAIN_VERBOSE,
                 callbacks=[es_callback, decrease_callback, decrease_callback2]
             )
 
