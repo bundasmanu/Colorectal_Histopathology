@@ -75,7 +75,7 @@ GA_OPTIMIZER = "GA"
 # train parameters
 BATCH_SIZE_ALEX_NO_AUG = 16
 BATCH_SIZE_ALEX_AUG = 16
-EPOCHS = 20
+EPOCHS = 1
 MULTIPROCESSING = True
 SHUFFLE = True
 GLOROT_SEED = 0
@@ -150,10 +150,12 @@ class_weights={
 }
 
 # PSO BOUNDS LIMITS --> (needs to be readjusted, in coherence with this specific problem, and with computational costs)
-MAX_VALUES_LAYERS_ALEX_NET = [196, 196, 196, 256, 256, 128, 80] # 6 convs, 1 dense and batch size
+MAX_VALUES_LAYERS_ALEX_NET = [196, 196, 196, 196, 196, 256, 128, 80] # 6 convs, 1 dense and batch size
+MIN_VALUES_LAYERS_ALEX_NET = [1, 1, 1, 1, 1, 1, 16, 16]
 MAX_VALUES_LAYERS_VGG_NET = [196, 196, 196, 196, 256, 128, 80] # 5 convs, 1 dense and batch_size
-MAX_VALUES_LAYERS_RESNET_NET = [128, 128, 128, 196, 196, 196, 196, 256, 256, 80] ## 8 convs and batch size
-MIN_BATCH_SIZE = 16
+MIN_VALUES_LAYERS_VGG_NET = [1, 1, 1, 1, 1, 16, 16]
+MAX_VALUES_LAYERS_RESNET_NET = [128, 128, 128, 196, 196, 196, 196, 256, 256, 80] ## 9 convs and batch size
+MIN_VALUES_LAYERS_RES_NET = [1, 1, 1, 1, 1, 1, 1, 1, 1, 16]
 
 # weights model files
 VGG_NET_WEIGHTS_FILE = 'vggnet_weights.h5'
@@ -173,7 +175,8 @@ LABEL_Y_AXIS = 'Nºfiltros 2ªcamada'
 pso_init_args_alex = (
     PARTICLES,  # number of individuals
     ITERATIONS,  # iterations
-    7,  # dimensions (5 conv filters, 1 dense neurons and batch size)
+    8,  # dimensions (6 conv filters, 1 dense neurons and batch size)
+    np.array(MIN_VALUES_LAYERS_ALEX_NET),
     np.array(MAX_VALUES_LAYERS_ALEX_NET)  # superior bound limits for dimensions
 )
 
@@ -181,6 +184,7 @@ pso_init_args_vgg = (
     PARTICLES,  # number of individuals
     ITERATIONS,  # iterations
     7,  # dimensions (5 conv filters, 1 dense neurons and batch size)
+    np.array(MIN_VALUES_LAYERS_VGG_NET),
     np.array(MAX_VALUES_LAYERS_VGG_NET)  # superior bound limits for dimensions
 )
 
@@ -188,5 +192,6 @@ pso_init_args_resnet = (
     PARTICLES,  # number of individuals
     ITERATIONS,  # iterations
     10,  # dimensions (9 conv filters and batch size)
+    np.array(MIN_VALUES_LAYERS_RES_NET),
     np.array(MAX_VALUES_LAYERS_RESNET_NET)  # superior bound limits for dimensions
 )

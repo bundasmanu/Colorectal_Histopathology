@@ -192,38 +192,38 @@ def main():
     ## --------------------------- ENSEMBLE OF MODELS ------------------------------------
 
     # get weights of all methods from files
-    alexNet = load_model(config.ALEX_NET_WEIGHTS_FILE)
-    vggnet = load_model(config.VGG_NET_WEIGHTS_FILE)
-    resnet = load_model(config.RES_NET_WEIGHTS_FILE)
-
-    models = [alexNet, vggnet, resnet]
-
-    ##call ensemble method
-    ensemble_model = config_func.ensemble(models=models)
-    predictions = ensemble_model.predict(data_obj.X_test)
-    argmax_preds = np.argmax(predictions, axis=1)  # BY ROW, BY EACH SAMPLE
-    argmax_preds = keras.utils.to_categorical(argmax_preds)
-
-    ## print final results
-    config_func.print_final_results(data_obj.y_test, argmax_preds, history=None, dict=False)
+    # alexNet = load_model(config.ALEX_NET_WEIGHTS_FILE)
+    # vggnet = load_model(config.VGG_NET_WEIGHTS_FILE)
+    # resnet = load_model(config.RES_NET_WEIGHTS_FILE)
+    #
+    # models = [alexNet, vggnet, resnet]
+    #
+    # ##call ensemble method
+    # ensemble_model = config_func.ensemble(models=models)
+    # predictions = ensemble_model.predict(data_obj.X_test)
+    # argmax_preds = np.argmax(predictions, axis=1)  # BY ROW, BY EACH SAMPLE
+    # argmax_preds = keras.utils.to_categorical(argmax_preds)
+    #
+    # ## print final results
+    # config_func.print_final_results(data_obj.y_test, argmax_preds, history=None, dict=False)
 
     ## --------------------------- PSO ------------------------------------------------
 
     # optimizer fabric object
-    # opt_fact = OptimizerFactory.OptimizerFactory()
-    #
-    # # definition models optimizers
-    # pso_alex = opt_fact.createOptimizer(config.PSO_OPTIMIZER, alexNet, *config.pso_init_args_alex)
-    # pso_vgg = opt_fact.createOptimizer(config.PSO_OPTIMIZER, vggnet, *config.pso_init_args_vgg)
-    # pso_resnet = opt_fact.createOptimizer(config.PSO_OPTIMIZER, resnet, *config.pso_init_args_resnet)
-    #
-    # # optimize and print best cost
-    # cost, pos, optimizer = pso_alex.optimize()
-    # print(cost)
-    # print(pos)
-    # pso_alex.plotCostHistory(optimizer)
-    # pso_alex.plotPositionHistory(optimizer, np.array(config.X_LIMITS), np.array(config.Y_LIMITS), config.PSO_POSITION_ITERS,
-    #                            config.LABEL_X_AXIS, config.LABEL_Y_AXIS)
+    opt_fact = OptimizerFactory.OptimizerFactory()
+
+    # definition models optimizers
+    pso_alex = opt_fact.createOptimizer(config.PSO_OPTIMIZER, alexNet, *config.pso_init_args_alex)
+    pso_vgg = opt_fact.createOptimizer(config.PSO_OPTIMIZER, vggnet, *config.pso_init_args_vgg)
+    pso_resnet = opt_fact.createOptimizer(config.PSO_OPTIMIZER, resnet, *config.pso_init_args_resnet)
+
+    # optimize and print best cost
+    cost, pos, optimizer = pso_alex.optimize()
+    print(cost)
+    print(pos)
+    pso_alex.plotCostHistory(optimizer)
+    pso_alex.plotPositionHistory(optimizer, np.array(config.X_LIMITS), np.array(config.Y_LIMITS), config.PSO_POSITION_ITERS,
+                               config.LABEL_X_AXIS, config.LABEL_Y_AXIS)
 
 if __name__ == "__main__":
     main()

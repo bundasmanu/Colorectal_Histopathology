@@ -25,8 +25,9 @@ class PSO(Optimizer.Optimizer):
                 * if user needs to use lower_limit for dimensions different from 1,
                     needs to override __init__, and after that needs to override boundsDefinition method
         '''
+        self.limit_infer = args[-2]
         self.limit_super = args[-1]  # last argument
-        super(PSO, self).__init__(model, *args[:-1]) # all args except last one --> last one is limit_super, that is a attribute of PSO concrete class
+        super(PSO, self).__init__(model, *args[:-2]) # all args except last one --> last one is limit_super, that is a attribute of PSO concrete class
 
     def plotCostHistory(self, optimizer):
 
@@ -83,9 +84,10 @@ class PSO(Optimizer.Optimizer):
             totalDimensions = self.dims
 
             minBounds = np.ones(totalDimensions)
-            minBounds[totalDimensions - 1] = minBounds[totalDimensions - 1] * config.MIN_BATCH_SIZE  # min batch size
-            maxBounds = np.ones(totalDimensions)
+            minBounds = [minBounds[j] * i for i, j in zip(self.limit_infer, range(totalDimensions))]
+            minBounds = np.array(minBounds)
 
+            maxBounds = np.ones(totalDimensions)
             maxBounds = [maxBounds[j] * i for i, j in zip(self.limit_super, range(totalDimensions))]
             maxBounds = np.array(maxBounds)
 
