@@ -55,7 +55,7 @@ VALID_PADDING = "valid"
 SAME_PADDING = "same"
 
 # regularization and train optimizer parameters
-LEARNING_RATE = 0.01
+LEARNING_RATE = 0.001
 DECAY = 1e-6
 
 # train function's of loss
@@ -75,7 +75,7 @@ GA_OPTIMIZER = "GA"
 # train parameters
 BATCH_SIZE_ALEX_NO_AUG = 16
 BATCH_SIZE_ALEX_AUG = 16
-EPOCHS = 15
+EPOCHS = 20
 MULTIPROCESSING = True
 SHUFFLE = True
 GLOROT_SEED = 0
@@ -150,12 +150,12 @@ class_weights={
 }
 
 # PSO BOUNDS LIMITS --> (needs to be readjusted, in coherence with this specific problem, and with computational costs)
-MAX_VALUES_LAYERS_ALEX_NET = [196, 196, 196, 196, 196, 256, 128, 80] # 6 convs, 1 dense and batch size
-MIN_VALUES_LAYERS_ALEX_NET = [1, 1, 1, 1, 1, 1, 16, 16]
-MAX_VALUES_LAYERS_VGG_NET = [196, 196, 196, 196, 256, 128, 80] # 5 convs, 1 dense and batch_size
-MIN_VALUES_LAYERS_VGG_NET = [1, 1, 1, 1, 1, 16, 16]
-MAX_VALUES_LAYERS_RESNET_NET = [128, 128, 128, 196, 196, 196, 196, 256, 256, 80] ## 9 convs and batch size
-MIN_VALUES_LAYERS_RES_NET = [1, 1, 1, 1, 1, 1, 1, 1, 1, 16]
+MAX_VALUES_LAYERS_ALEX_NET = [3, 5, 128, 48, 3, 128, 256] # nº of normal conv's, nº of stack cnn layers, nº of feature maps of initial conv, growth rate, nº neurons of FCL layer and batch size
+MIN_VALUES_LAYERS_ALEX_NET = [0, 0, 16, 8, 1, 8, 16]
+MAX_VALUES_LAYERS_VGG_NET = [7, 128, 42, 3, 128, 256] # nº of stack cnn layers, nº of feature maps of initial conv, growth rate, nº neurons of FCL layer and batch size
+MIN_VALUES_LAYERS_VGG_NET = [0, 16, 8, 1, 8, 16]
+MAX_VALUES_LAYERS_RES_NET = [64, 5, 32, 256] # number of filters of first conv layer, number of conv+identity blocks, growth rate and batch size
+MIN_VALUES_LAYERS_RES_NET = [1, 1, 8, 16]
 
 # weights model files
 VGG_NET_WEIGHTS_FILE = 'vggnet_weights.h5'
@@ -175,7 +175,7 @@ LABEL_Y_AXIS = 'Nºfiltros 2ªcamada'
 pso_init_args_alex = (
     PARTICLES,  # number of individuals
     ITERATIONS,  # iterations
-    8,  # dimensions (6 conv filters, 1 dense neurons and batch size)
+    7, # dimensions (6nº of normal conv's, nº of stack cnn layers, nº of feature maps of initial conv, growth rate, nº of FCL layers that preceding Output layer, nº neurons of FCL layer (equals along with each other) and batch size)
     np.array(MIN_VALUES_LAYERS_ALEX_NET),
     np.array(MAX_VALUES_LAYERS_ALEX_NET)  # superior bound limits for dimensions
 )
@@ -183,7 +183,7 @@ pso_init_args_alex = (
 pso_init_args_vgg = (
     PARTICLES,  # number of individuals
     ITERATIONS,  # iterations
-    7,  # dimensions (5 conv filters, 1 dense neurons and batch size)
+    6,  # dimensions (nº of stack cnn layers, nº of feature maps of initial conv, growth rate, nº of FCL layers that preceding Output layer, nº neurons of FCL layer (equals along with each other) and batch size)
     np.array(MIN_VALUES_LAYERS_VGG_NET),
     np.array(MAX_VALUES_LAYERS_VGG_NET)  # superior bound limits for dimensions
 )
@@ -191,9 +191,9 @@ pso_init_args_vgg = (
 pso_init_args_resnet = (
     PARTICLES,  # number of individuals
     ITERATIONS,  # iterations
-    10,  # dimensions (9 conv filters and batch size)
+    4,  # number of filters of first conv layer, number of conv+identity blocks, growth rate and batch size
     np.array(MIN_VALUES_LAYERS_RES_NET),
-    np.array(MAX_VALUES_LAYERS_RESNET_NET)  # superior bound limits for dimensions
+    np.array(MAX_VALUES_LAYERS_RES_NET)  # superior bound limits for dimensions
 )
 
 ## verbose and summary options on build and train
