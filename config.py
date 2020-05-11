@@ -151,11 +151,11 @@ class_weights={
 
 # PSO BOUNDS LIMITS --> (needs to be readjusted, in coherence with this specific problem, and with computational costs)
 MAX_VALUES_LAYERS_ALEX_NET = [3, 4, 128, 48, 3, 128, 256] # nº of normal conv's, nº of stack cnn layers, nº of feature maps of initial conv, growth rate, nº neurons of FCL layer and batch size
-MIN_VALUES_LAYERS_ALEX_NET = [0, 0, 8, 4, 1, 16, 16]
+MIN_VALUES_LAYERS_ALEX_NET = [0, 0, 8, 0, 1, 16, 16]
 MAX_VALUES_LAYERS_VGG_NET = [7, 128, 48, 3, 128, 256] # nº of stack cnn layers, nº of feature maps of initial conv, growth rate, nº neurons of FCL layer and batch size
-MIN_VALUES_LAYERS_VGG_NET = [1, 16, 4, 1, 16, 16]
+MIN_VALUES_LAYERS_VGG_NET = [1, 16, 0, 1, 16, 16]
 MAX_VALUES_LAYERS_RES_NET = [128, 6, 48, 256] # number of filters of first conv layer, number of conv+identity blocks, growth rate and batch size
-MIN_VALUES_LAYERS_RES_NET = [1, 1, 4, 16]
+MIN_VALUES_LAYERS_RES_NET = [1, 1, 0, 16]
 
 # weights model files
 VGG_NET_WEIGHTS_FILE = 'vggnet_weights.h5'
