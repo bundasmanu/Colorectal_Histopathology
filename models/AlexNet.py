@@ -36,7 +36,7 @@ class AlexNet(Model.Model):
         try:
 
             if input_shape != None:
-                input = Conv2D(filters=numberFilters, input_shape=input_shape, kernel_size=(3,3), strides=1,
+                input = Conv2D(filters=numberFilters, input_shape=input_shape, kernel_size=(3,3), strides=2,
                                padding=config.SAME_PADDING, kernel_regularizer=regularizers.l2(config.DECAY)) (input)
             else:
                 input = Conv2D(filters=numberFilters, kernel_size=(3, 3), strides=1,

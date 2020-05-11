@@ -220,11 +220,11 @@ def main():
     # pso_resnet = opt_fact.createOptimizer(config.PSO_OPTIMIZER, resnet, *config.pso_init_args_resnet)
     #
     # # optimize and print best cost
-    # cost, pos, optimizer = pso_alex.optimize()
+    # cost, pos, optimizer = pso_vgg.optimize()
     # print(cost)
     # print(pos)
-    # pso_alex.plotCostHistory(optimizer)
-    # pso_alex.plotPositionHistory(optimizer, np.array(config.X_LIMITS), np.array(config.Y_LIMITS), config.PSO_POSITION_ITERS,
+    # pso_vgg.plotCostHistory(optimizer)
+    # pso_vgg.plotPositionHistory(optimizer, np.array(config.X_LIMITS), np.array(config.Y_LIMITS), config.PSO_POSITION_ITERS,
     #                            config.LABEL_X_AXIS, config.LABEL_Y_AXIS)
 
 if __name__ == "__main__":
