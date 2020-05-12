@@ -13,6 +13,7 @@ from keras.layers import Input, Average
 import cv2
 from exceptions import CustomError
 import pandas as pd
+import math
 
 def getImages(directory):
 
@@ -335,6 +336,41 @@ def print_final_results(y_test, predictions, history, dict=False):
         print(report)
         plt.figure()
         plot_confusion_matrix(confusion_mat, config.DICT_TARGETS)
+
+    except:
+        raise
+
+def print_Best_Position_PSO(dimensions, modelType):
+
+    '''
+    This function prints convert float dimensions position of best particle
+    :param dimensions: numpy array of shape (dimensions of model, )
+    :param modelType: str --> model type
+    :return:
+    '''
+
+    try:
+
+        if modelType == config.ALEX_NET:
+            print("Nº normal conv's: {}".format(math.trunc(dimensions[0])))
+            print("Nº stack conv's: {}".format(math.trunc(dimensions[1])))
+            print("Initial nº of feature maps: {}".format(math.trunc(dimensions[2])))
+            print("Growth rate: {}".format(math.trunc(dimensions[3])))
+            print("Nº Dense layers: {}".format(math.trunc(dimensions[4])))
+            print("Number of Feature Maps on Dense layers: {}".format(math.trunc(dimensions[5])))
+            print("Batch Size: {}".format(math.trunc(dimensions[6])))
+        elif modelType == config.VGG_NET:
+            print("Nº stack conv's: {}".format(math.trunc(dimensions[0])))
+            print("Initial nº of feature maps: {}".format(math.trunc(dimensions[1])))
+            print("Growth rate: {}".format(math.trunc(dimensions[2])))
+            print("Nº Dense layers: {}".format(math.trunc(dimensions[3])))
+            print("Number of Feature Maps on Dense layers: {}".format(math.trunc(dimensions[4])))
+            print("Batch Size: {}".format(math.trunc(dimensions[5])))
+        else:
+            print("Initial nº of feature maps: {}".format(math.trunc(dimensions[0])))
+            print("Number Residual Blocks: {}".format(math.trunc(dimensions[1])))
+            print("Growth rate: {}".format(math.trunc(dimensions[2])))
+            print("Batch Size: {}".format(math.trunc(dimensions[3])))
 
     except:
         raise

@@ -217,11 +217,11 @@ def main():
     pso_resnet = opt_fact.createOptimizer(config.PSO_OPTIMIZER, resnet, *config.pso_init_args_resnet)
 
     # optimize and print best cost
-    cost, pos, optimizer = pso_alex.optimize()
-    print(cost)
-    print(pos)
-    pso_alex.plotCostHistory(optimizer)
-    pso_alex.plotPositionHistory(optimizer, np.array(config.X_LIMITS), np.array(config.Y_LIMITS), config.PSO_POSITION_ITERS,
+    cost, pos, optimizer = pso_resnet.optimize()
+    print("Custo: {}".format(cost))
+    config_func.print_Best_Position_PSO(pos, config.RES_NET) # print position
+    pso_resnet.plotCostHistory(optimizer)
+    pso_resnet.plotPositionHistory(optimizer, np.array(config.X_LIMITS), np.array(config.Y_LIMITS), config.PSO_POSITION_ITERS,
                                config.LABEL_X_AXIS, config.LABEL_Y_AXIS)
 
 if __name__ == "__main__":

@@ -75,7 +75,7 @@ GA_OPTIMIZER = "GA"
 # train parameters
 BATCH_SIZE_ALEX_NO_AUG = 16
 BATCH_SIZE_ALEX_AUG = 16
-EPOCHS = 20
+EPOCHS = 1
 MULTIPROCESSING = True
 SHUFFLE = True
 GLOROT_SEED = 0
@@ -112,8 +112,8 @@ ERROR_ON_SUBSAMPLING = "\n Error on subsampling, percentage invalid"
 WARNING_SUBSAMPLING = "\nIf you want to subsampling data, please pass a value >0 and <1"
 
 #PSO OPTIONS
-PARTICLES = 20
-ITERATIONS = 12
+PARTICLES = 2
+ITERATIONS = 2
 PSO_DIMENSIONS = 5
 TOPOLOGY_FLAG = 0 # 0 MEANS GBEST, AND 1 MEANS LBEST
 gbestOptions = {'w' : 0.9, 'c1' : 0.7, 'c2' : 0.7}
