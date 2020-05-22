@@ -11,7 +11,7 @@ from keras.models import load_model
 import config
 import config_func
 import os
-os.environ["CUDA_VISIBLE_DEVICES"]="-1"  #THIS LINE DISABLES GPU OPTIMIZATION
+#os.environ["CUDA_VISIBLE_DEVICES"]="-1"  #THIS LINE DISABLES GPU OPTIMIZATION
 
 def main():
 
@@ -177,16 +177,17 @@ def main():
     resnet_args = (
         48, # number of filters of initial CNN layer
         4, # number of consecutive conv+identity blocks
+        1, # repetition of identity block's, by default resnet-18 is 1 (1conv block + 1 identity block) for all layers
         8, # growth rate
         config.BATCH_SIZE_ALEX_AUG, # batch size
     )
 
     # apply build, train and predict
-    #model, predictions, history = resnet.template_method(*resnet_args)
+    model, predictions, history = resnet.template_method(*resnet_args)
     ##resnet.save(model, config.RES_NET_WEIGHTS_FILE)
 
     # print final results
-    #config_func.print_final_results(y_test=data_obj.y_test, predictions=predictions, history=history, dict=False)
+    config_func.print_final_results(y_test=data_obj.y_test, predictions=predictions, history=history, dict=False)
 
     ## --------------------------- ENSEMBLE OF MODELS ------------------------------------
 
@@ -209,20 +210,20 @@ def main():
     ## --------------------------- PSO ------------------------------------------------
 
     # optimizer fabric object
-    opt_fact = OptimizerFactory.OptimizerFactory()
-
-    # definition models optimizers
-    pso_alex = opt_fact.createOptimizer(config.PSO_OPTIMIZER, alexNet, *config.pso_init_args_alex)
-    pso_vgg = opt_fact.createOptimizer(config.PSO_OPTIMIZER, vggnet, *config.pso_init_args_vgg)
-    pso_resnet = opt_fact.createOptimizer(config.PSO_OPTIMIZER, resnet, *config.pso_init_args_resnet)
-
-    # optimize and print best cost
-    cost, pos, optimizer = pso_resnet.optimize()
-    print("Custo: {}".format(cost))
-    config_func.print_Best_Position_PSO(pos, config.RES_NET) # print position
-    pso_resnet.plotCostHistory(optimizer)
-    pso_resnet.plotPositionHistory(optimizer, np.array(config.X_LIMITS), np.array(config.Y_LIMITS), config.PSO_POSITION_ITERS,
-                               config.LABEL_X_AXIS, config.LABEL_Y_AXIS)
+    # opt_fact = OptimizerFactory.OptimizerFactory()
+    #
+    # # definition models optimizers
+    # pso_alex = opt_fact.createOptimizer(config.PSO_OPTIMIZER, alexNet, *config.pso_init_args_alex)
+    # pso_vgg = opt_fact.createOptimizer(config.PSO_OPTIMIZER, vggnet, *config.pso_init_args_vgg)
+    # pso_resnet = opt_fact.createOptimizer(config.PSO_OPTIMIZER, resnet, *config.pso_init_args_resnet)
+    #
+    # # optimize and print best cost
+    # cost, pos, optimizer = pso_resnet.optimize()
+    # print("Custo: {}".format(cost))
+    # config_func.print_Best_Position_PSO(pos, config.RES_NET) # print position
+    # pso_resnet.plotCostHistory(optimizer)
+    # pso_resnet.plotPositionHistory(optimizer, np.array(config.X_LIMITS), np.array(config.Y_LIMITS), config.PSO_POSITION_ITERS,
+    #                            config.LABEL_X_AXIS, config.LABEL_Y_AXIS)
 
 if __name__ == "__main__":
     main()

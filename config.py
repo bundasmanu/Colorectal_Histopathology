@@ -75,7 +75,7 @@ GA_OPTIMIZER = "GA"
 # train parameters
 BATCH_SIZE_ALEX_NO_AUG = 16
 BATCH_SIZE_ALEX_AUG = 16
-EPOCHS = 1
+EPOCHS = 20
 MULTIPROCESSING = True
 SHUFFLE = True
 GLOROT_SEED = 0
@@ -112,8 +112,8 @@ ERROR_ON_SUBSAMPLING = "\n Error on subsampling, percentage invalid"
 WARNING_SUBSAMPLING = "\nIf you want to subsampling data, please pass a value >0 and <1"
 
 #PSO OPTIONS
-PARTICLES = 2
-ITERATIONS = 2
+PARTICLES = 20
+ITERATIONS = 12
 PSO_DIMENSIONS = 5
 TOPOLOGY_FLAG = 0 # 0 MEANS GBEST, AND 1 MEANS LBEST
 gbestOptions = {'w' : 0.9, 'c1' : 0.7, 'c2' : 0.7}
@@ -150,12 +150,12 @@ class_weights={
 }
 
 # PSO BOUNDS LIMITS --> (needs to be readjusted, in coherence with this specific problem, and with computational costs)
-MAX_VALUES_LAYERS_ALEX_NET = [3, 4, 128, 48, 3, 128, 256] # nº of normal conv's, nº of stack cnn layers, nº of feature maps of initial conv, growth rate, nº neurons of FCL layer and batch size
-MIN_VALUES_LAYERS_ALEX_NET = [0, 0, 8, 0, 1, 16, 16]
-MAX_VALUES_LAYERS_VGG_NET = [7, 128, 48, 3, 128, 256] # nº of stack cnn layers, nº of feature maps of initial conv, growth rate, nº neurons of FCL layer and batch size
-MIN_VALUES_LAYERS_VGG_NET = [1, 16, 0, 1, 16, 16]
-MAX_VALUES_LAYERS_RES_NET = [128, 6, 48, 256] # number of filters of first conv layer, number of conv+identity blocks, growth rate and batch size
-MIN_VALUES_LAYERS_RES_NET = [1, 1, 0, 16]
+MAX_VALUES_LAYERS_ALEX_NET = [3, 4, 128, 48, 3, 128, 64] # nº of normal conv's, nº of stack cnn layers, nº of feature maps of initial conv, growth rate, nº neurons of FCL layer and batch size
+MIN_VALUES_LAYERS_ALEX_NET = [1, 0, 8, 0, 1, 16, 3]
+MAX_VALUES_LAYERS_VGG_NET = [7, 128, 48, 3, 128, 64] # nº of stack cnn layers, nº of feature maps of initial conv, growth rate, nº neurons of FCL layer and batch size
+MIN_VALUES_LAYERS_VGG_NET = [1, 8, 0, 1, 16, 3]
+MAX_VALUES_LAYERS_RES_NET = [128, 6, 3, 48, 64] # number of filters of first conv layer, number of conv+identity blocks, nº identity blocks, growth rate and batch size
+MIN_VALUES_LAYERS_RES_NET = [4, 1, 1, 0, 3]
 
 # weights model files
 VGG_NET_WEIGHTS_FILE = 'vggnet_weights.h5'
@@ -191,7 +191,7 @@ pso_init_args_vgg = (
 pso_init_args_resnet = (
     PARTICLES,  # number of individuals
     ITERATIONS,  # iterations
-    4,  # number of filters of first conv layer, number of conv+identity blocks, growth rate and batch size
+    5,  # number of filters of first conv layer, number of conv+identity blocks, nº of identity block (all layers - the same value), growth rate and batch size
     np.array(MIN_VALUES_LAYERS_RES_NET),
     np.array(MAX_VALUES_LAYERS_RES_NET)  # superior bound limits for dimensions
 )

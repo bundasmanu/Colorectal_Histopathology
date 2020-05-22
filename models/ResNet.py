@@ -68,6 +68,7 @@ class ResNet(Model.Model):
         '''
         THIS FUNCTIONS REPRESENTS THE CONCEPT OF CONVOLUTION BLOCK ON RESNET, COMBINING MAIN PATH AND SHORTCUT
             paper: https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf
+            residual model image (outout same): https://www.youtube.com/watch?v=wqkc-sj5H94
         :param tensor_input: input_tensor result of previous block application on cnn architecture (conv_block or identity_block)
         :param args: number of filters to populate conv2d layers
         :return: tensor merge of path created using convs and final shortcut
@@ -79,7 +80,7 @@ class ResNet(Model.Model):
             shortcut_path = tensor_input
 
             tensor_input = Conv2D(filters=args[0], padding=config.SAME_PADDING, kernel_size=(3, 3), strides=2,
-                                  # RETRIEVE SOME SPACE
+                                  # in paper 1 conv layer in 1 conv_block have stride=1, i continue with stride=2, in order to reduce computacional costs)
                                   kernel_initializer=glorot_uniform(config.GLOROT_SEED),
                                   kernel_regularizer=l2(config.DECAY))(tensor_input)
             tensor_input = BatchNormalization(axis=3)(
@@ -89,8 +90,7 @@ class ResNet(Model.Model):
             tensor_input = Conv2D(filters=args[1], padding=config.SAME_PADDING, kernel_size=(3, 3), strides=1,
                                   kernel_initializer=glorot_uniform(config.GLOROT_SEED),
                                   kernel_regularizer=l2(config.DECAY))(tensor_input)
-            tensor_input = BatchNormalization(axis=3)(
-                tensor_input)  ## perform batch normalization alongside channels axis [samples, width, height, channels]
+            tensor_input = BatchNormalization(axis=3)(tensor_input)  ## perform batch normalization alongside channels axis [samples, width, height, channels]
             #tensor_input = Activation(config.RELU_FUNCTION)(tensor_input)
 
             ## definition of shortcut path
@@ -137,9 +137,10 @@ class ResNet(Model.Model):
             ## loop of convolution and identity blocks
             numberFilters = args[0]
             for i in range(args[1]):
-                X = self.convolution_block(X, *(numberFilters, (numberFilters+args[2])))
-                X = self.identity_block(X, *(numberFilters, (numberFilters+args[2])))
-                numberFilters += args[2]
+                X = self.convolution_block(X, *(numberFilters, (numberFilters+args[3])))
+                for i in range(args[2]):
+                    X = self.identity_block(X, *(numberFilters, (numberFilters+args[3])))
+                numberFilters += args[3]
 
             X = AveragePooling2D(pool_size=(2, 2), strides=2)(X)
 
@@ -196,7 +197,7 @@ class ResNet(Model.Model):
                     else:
                         X_train, y_train = self.StrategyList[j].applyStrategy(self.data)
 
-            es_callback = EarlyStopping(monitor=config.VALIDATION_LOSS, patience=3)
+            es_callback = EarlyStopping(monitor=config.VALIDATION_LOSS, patience=4)
             decrease_callback = ReduceLROnPlateau(monitor=config.LOSS,
                                                         patience=1,
                                                         factor=0.7,
