@@ -156,11 +156,11 @@ def main():
     )
 
     # apply build, train and predict
-    #model, predictions, history = vggnet.template_method(*vgg_args)
+    model, predictions, history = vggnet.template_method(*vgg_args)
     ##vggnet.save(model, config.VGG_NET_WEIGHTS_FILE)
 
     # print final results
-    #config_func.print_final_results(y_test=data_obj.y_test, predictions=predictions, history=history, dict=False)
+    config_func.print_final_results(y_test=data_obj.y_test, predictions=predictions, history=history, dict=False)
 
     ## ---------------------------RESNET APPLICATION ------------------------------------
 
@@ -183,11 +183,11 @@ def main():
     )
 
     # apply build, train and predict
-    model, predictions, history = resnet.template_method(*resnet_args)
+    #model, predictions, history = resnet.template_method(*resnet_args)
     ##resnet.save(model, config.RES_NET_WEIGHTS_FILE)
 
     # print final results
-    config_func.print_final_results(y_test=data_obj.y_test, predictions=predictions, history=history, dict=False)
+    #config_func.print_final_results(y_test=data_obj.y_test, predictions=predictions, history=history, dict=False)
 
     ## --------------------------- ENSEMBLE OF MODELS ------------------------------------
 

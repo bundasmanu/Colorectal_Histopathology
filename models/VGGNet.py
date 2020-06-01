@@ -11,6 +11,7 @@ from keras.callbacks import ReduceLROnPlateau, EarlyStopping
 from .Strategies_Train import Strategy, DataAugmentation
 from keras import regularizers
 from keras.models import Model as mp
+from keras.initializers import glorot_uniform
 
 class VGGNet(Model.Model):
 
@@ -44,8 +45,8 @@ class VGGNet(Model.Model):
             input = Conv2D(filters=numberFilters, kernel_size=(3,3), strides=1, padding=config.SAME_PADDING,
                            kernel_regularizer=regularizers.l2(config.DECAY)) (input)
             input = Activation(config.RELU_FUNCTION) (input)
-            input = MaxPooling2D(pool_size=(2,2), strides=2) (input)
             input = BatchNormalization() (input)
+            input = MaxPooling2D(pool_size=(2,2), strides=2) (input)
             input = Dropout(dropoutRate) (input)
 
             return input

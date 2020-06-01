@@ -79,6 +79,7 @@ EPOCHS = 20
 MULTIPROCESSING = True
 SHUFFLE = True
 GLOROT_SEED = 0
+HE_SEED = 0
 
 # data augmentation options
 HORIZONTAL_FLIP = True
