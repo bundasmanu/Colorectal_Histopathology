@@ -10,7 +10,7 @@ HEIGHT = 150
 CHANNELS = 3
 
 NUMBER_CLASSES = 8
-STANDARDIZE_AXIS_CHANNELS = (0,1,2,3)
+STANDARDIZE_AXIS_CHANNELS = (0,1,2)
 
 # directories to get images
 INPUT_DIR = 'input'
@@ -33,8 +33,8 @@ TARGET = 'target'
 SUBSAMPLE_PERCENTAGE = 1
 
 # split percentages of data
-VALIDATION_SPLIT = 0.2
-TEST_SPLIT = 0.25
+VALIDATION_SPLIT = 0.15
+TEST_SPLIT = 0.2353
 RANDOM_STATE = 0
 
 X_VAL_ARGS = "X_Val"
@@ -44,6 +44,7 @@ Y_VAL_ARGS = "y_val"
 ALEX_NET = "ALEXNET"
 VGG_NET = "VGGNET"
 RES_NET = "RESNET"
+DENSE_NET = "DENSENET"
 
 # activation functions
 RELU_FUNCTION = "relu"
@@ -151,12 +152,14 @@ class_weights={
 }
 
 # PSO BOUNDS LIMITS --> (needs to be readjusted, in coherence with this specific problem, and with computational costs)
-MAX_VALUES_LAYERS_ALEX_NET = [3, 4, 128, 48, 3, 128, 64] # nº of normal conv's, nº of stack cnn layers, nº of feature maps of initial conv, growth rate, nº neurons of FCL layer and batch size
-MIN_VALUES_LAYERS_ALEX_NET = [1, 0, 8, 0, 1, 16, 3]
-MAX_VALUES_LAYERS_VGG_NET = [7, 128, 48, 3, 128, 64] # nº of stack cnn layers, nº of feature maps of initial conv, growth rate, nº neurons of FCL layer and batch size
-MIN_VALUES_LAYERS_VGG_NET = [1, 8, 0, 1, 16, 3]
-MAX_VALUES_LAYERS_RES_NET = [128, 6, 3, 48, 64] # number of filters of first conv layer, number of conv+identity blocks, nº identity blocks, growth rate and batch size
-MIN_VALUES_LAYERS_RES_NET = [4, 1, 1, 0, 3]
+MAX_VALUES_LAYERS_ALEX_NET = [4.99, 3.99, 96, 48, 2.99, 96, 48] # nº of normal conv's, nº of stack cnn layers, nº of feature maps of initial conv, growth rate, nº neurons of FCL layer and batch size
+MIN_VALUES_LAYERS_ALEX_NET = [1, 1, 4, 0, 1, 16, 6]
+MAX_VALUES_LAYERS_VGG_NET = [7.99, 96, 48, 2.99, 72, 48] # nº of stack cnn layers, nº of feature maps of initial conv, growth rate, nº neurons of FCL layer and batch size
+MIN_VALUES_LAYERS_VGG_NET = [2, 4, 0, 1, 16, 6]
+MAX_VALUES_LAYERS_RES_NET = [96, 5.99, 3.99, 48, 48] # number of filters of first conv layer, number of conv+identity blocks, nº identity blocks, growth rate and batch size
+MIN_VALUES_LAYERS_RES_NET = [4, 1, 1, 0, 6]
+MAX_VALUES_LAYERS_DENSE_NET = [96, 4.99, 6.99, 24, 1, 48] # nº of initial filters, nº of dense blocks, nº of composite blocks, growth rate, compression rate and batch size
+MIN_VALUES_LAYERS_DENSE_NET = [4, 1, 2, 0, 0.1, 6]
 
 # weights model files
 VGG_NET_WEIGHTS_FILE = 'vggnet_weights.h5'
@@ -195,6 +198,14 @@ pso_init_args_resnet = (
     5,  # number of filters of first conv layer, number of conv+identity blocks, nº of identity block (all layers - the same value), growth rate and batch size
     np.array(MIN_VALUES_LAYERS_RES_NET),
     np.array(MAX_VALUES_LAYERS_RES_NET)  # superior bound limits for dimensions
+)
+
+pso_init_args_densenet = (
+    PARTICLES,  # number of individuals
+    ITERATIONS,  # iterations
+    6,  # dimensions (init Conv Feature Maps, number of blocks, number cnn layers on blocks, growth rate, comprension rate and batch size)
+    np.array(MIN_VALUES_LAYERS_DENSE_NET), # lower bound limits for dimensions
+    np.array(MAX_VALUES_LAYERS_DENSE_NET)  # superior bound limits for dimensions
 )
 
 ## verbose and summary options on build and train

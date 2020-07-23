@@ -7,9 +7,9 @@ import config_func
 import numpy
 from keras.models import Model as mp, Sequential
 from keras.layers import Conv2D, MaxPooling2D, Activation, Input, BatchNormalization, Dense, Flatten, Add, \
-    ZeroPadding2D, AveragePooling2D
+    ZeroPadding2D, AveragePooling2D, GlobalAveragePooling2D
 from keras.callbacks.callbacks import History, ReduceLROnPlateau, EarlyStopping
-from keras.optimizers import Adam
+from keras.optimizers import Adam, SGD
 from keras.initializers import glorot_uniform, he_uniform
 from keras.regularizers import l2
 from keras.utils import plot_model
@@ -47,7 +47,7 @@ class ResNet(Model.Model):
                 tensor_input)  ## perform batch normalization alongside channels axis [samples, width, height, channels]
             tensor_input = Activation(config.RELU_FUNCTION)(tensor_input)
 
-            tensor_input = Conv2D(filters=args[1], padding=config.SAME_PADDING, kernel_size=(3, 3), strides=1,
+            tensor_input = Conv2D(filters=args[0], padding=config.SAME_PADDING, kernel_size=(3, 3), strides=1,
                                   kernel_initializer=he_uniform(config.HE_SEED),
                                   kernel_regularizer=l2(config.DECAY))(tensor_input)
             tensor_input = BatchNormalization(axis=3)(
@@ -79,7 +79,7 @@ class ResNet(Model.Model):
             ## save copy input, because i need to apply alteration on tensor_input parameter, and in final i need to merge this two tensors
             shortcut_path = tensor_input
 
-            tensor_input = Conv2D(filters=args[0], padding=config.SAME_PADDING, kernel_size=(3, 3), strides=2,
+            tensor_input = Conv2D(filters=args[0], padding=config.SAME_PADDING, kernel_size=(3, 3), strides=args[1],
                                   # in paper 1 conv layer in 1 conv_block have stride=1, i continue with stride=2, in order to reduce computacional costs)
                                   kernel_initializer=he_uniform(config.HE_SEED),
                                   kernel_regularizer=l2(config.DECAY))(tensor_input)
@@ -87,14 +87,14 @@ class ResNet(Model.Model):
                 tensor_input)  ## perform batch normalization alongside channels axis [samples, width, height, channels]
             tensor_input = Activation(config.RELU_FUNCTION)(tensor_input)
 
-            tensor_input = Conv2D(filters=args[1], padding=config.SAME_PADDING, kernel_size=(3, 3), strides=1,
+            tensor_input = Conv2D(filters=args[0], padding=config.SAME_PADDING, kernel_size=(3, 3), strides=1,
                                   kernel_initializer=he_uniform(config.HE_SEED),
                                   kernel_regularizer=l2(config.DECAY))(tensor_input)
             tensor_input = BatchNormalization(axis=3)(tensor_input)  ## perform batch normalization alongside channels axis [samples, width, height, channels]
             tensor_input = Activation(config.RELU_FUNCTION)(tensor_input)
 
             ## definition of shortcut path
-            shortcut_path = Conv2D(filters=args[1], kernel_size=(1, 1), strides=2, padding=config.VALID_PADDING,
+            shortcut_path = Conv2D(filters=args[0], kernel_size=(1, 1), strides=args[1], padding=config.SAME_PADDING,
                                    kernel_initializer=he_uniform(config.HE_SEED),
                                    kernel_regularizer=l2(config.DECAY))(shortcut_path)
             shortcut_path = BatchNormalization(axis=3)(shortcut_path)
@@ -132,19 +132,20 @@ class ResNet(Model.Model):
                        kernel_initializer=he_uniform(config.HE_SEED), kernel_regularizer=l2(config.DECAY))(X)
             X = BatchNormalization(axis=3)(X)
             X = Activation(config.RELU_FUNCTION)(X)
-            X = MaxPooling2D(pool_size=(2, 2), strides=2)(X)
+            X = MaxPooling2D(pool_size=(3, 3), strides=2, padding='same')(X)
 
             ## loop of convolution and identity blocks
             numberFilters = args[0]
             for i in range(args[1]):
-                X = self.convolution_block(X, *(numberFilters, (numberFilters)))
+                if i == 0:
+                    X = self.convolution_block(X, *(numberFilters, 1)) #first set of building blocks, stride is 1
+                else:
+                    X = self.convolution_block(X, *(numberFilters, 2)) #next set of building blocks, stride is 2
                 for i in range(args[2]):
-                    X = self.identity_block(X, *(numberFilters, (numberFilters)))
+                    X = self.identity_block(X, *(numberFilters, ))
                 numberFilters += args[3]
 
-            X = AveragePooling2D(pool_size=(2, 2), strides=2)(X)
-
-            X = Flatten()(X)
+            X = GlobalAveragePooling2D()(X)
 
             X = Dense(units=config.NUMBER_CLASSES, kernel_initializer=he_uniform(config.HE_SEED),
                       kernel_regularizer=l2(config.DECAY))(X)
@@ -178,6 +179,7 @@ class ResNet(Model.Model):
                 raise CustomError.ErrorCreationModel(config.ERROR_NO_MODEL)
 
             # OPTIMIZER
+            #opt = SGD(learning_rate=config.LEARNING_RATE, decay=config.DECAY, nesterov=True, momentum=0.9)
             opt = Adam(learning_rate=config.LEARNING_RATE, decay=config.DECAY)
 
             # COMPILE

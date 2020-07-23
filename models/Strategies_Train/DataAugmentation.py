@@ -26,8 +26,6 @@ class DataAugmentation(Strategy.Strategy):
                 vertical_flip=config.VERTICAL_FLIP,
                 width_shift_range=config.WIDTH_SHIFT_RANGE,
                 height_shift_range=config.HEIGHT_SHIFT_RANGE,
-                rotation_range=config.ROTATION_RANGE,
-                zoom_range=config.ZOOM_RANGE,
             )
 
             image_gen.fit(data.X_train, augment=True) #DATA AUGMENTATION

@@ -108,6 +108,8 @@ def normalize(X_train, X_val, X_test):
 
     '''
     #REF https://forums.fast.ai/t/images-normalization/4058/8
+    #https://stackoverflow.com/questions/54525136/numpy-normalize-rgb-image-dataset
+    #very good ref: https://stackoverflow.com/questions/55741840/how-to-calculate-np-mean-for-images-of-3d-array
     :param X_train: numpy array representing training data
     :param X_val: numpy array representing validation data
     :param X_test: numpy array representing test data
@@ -390,11 +392,19 @@ def print_Best_Position_PSO(dimensions, modelType):
             print("Nº Dense layers: {}".format(math.trunc(dimensions[3])))
             print("Number of Feature Maps on Dense layers: {}".format(math.trunc(dimensions[4])))
             print("Batch Size: {}".format(math.trunc(dimensions[5])))
+        elif modelType == config.RES_NET:
+            print("Initial nº of feature maps: {}".format(math.trunc(dimensions[0])))
+            print("Number of Convolutional Blocks: {}".format(math.trunc(dimensions[1])))
+            print("Number Residual Blocks: {}".format(math.trunc(dimensions[2])))
+            print("Growth rate: {}".format(math.trunc(dimensions[3])))
+            print("Batch Size: {}".format(math.trunc(dimensions[4])))
         else:
             print("Initial nº of feature maps: {}".format(math.trunc(dimensions[0])))
-            print("Number Residual Blocks: {}".format(math.trunc(dimensions[1])))
-            print("Growth rate: {}".format(math.trunc(dimensions[2])))
-            print("Batch Size: {}".format(math.trunc(dimensions[3])))
+            print("Number Dense Blocks: {}".format(math.trunc(dimensions[1])))
+            print("Number Composite Blocks: {}".format(math.trunc(dimensions[2])))
+            print("Growth rate: {}".format(math.trunc(dimensions[3])))
+            print("Compression rate: {}".format(dimensions[4]))
+            print("Batch Size: {}".format(math.trunc(dimensions[5])))
 
     except:
         raise

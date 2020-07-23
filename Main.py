@@ -11,6 +11,7 @@ from keras.models import load_model
 import config
 import config_func
 import os
+os.environ["TF_CPP_MIN_LOG_LEVEL"]="2"
 #os.environ["CUDA_VISIBLE_DEVICES"]="-1"  #THIS LINE DISABLES GPU OPTIMIZATION
 
 def main():
@@ -68,10 +69,10 @@ def main():
 
     # STRATIFY X_TEST, X_VAL AND X_TEST
     X_train, X_val, y_train, y_val = train_test_split(X, Y, test_size=config.VALIDATION_SPLIT, shuffle=True,
-                                                      random_state=config.RANDOM_STATE)
+                                                      random_state=config.RANDOM_STATE, stratify=Y)
 
     X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=config.TEST_SPLIT,
-                                                        shuffle=True, random_state=config.RANDOM_STATE)
+                                                        shuffle=True, random_state=config.RANDOM_STATE, stratify=y_train)
 
     # normalization of data
     X_train, X_val, X_test = config_func.normalize(X_train, X_val, X_test)
@@ -94,8 +95,6 @@ def main():
     optimization_factory = OptimizerFactory.OptimizerFactory()
 
     # definition of train strategies instances
-    undersampling = UnderSampling.UnderSampling()
-    oversampling = OverSampling.OverSampling()
     data_augment = DataAugmentation.DataAugmentation()
 
     ## ---------------------------ALEXNET APPLICATION ------------------------------------
@@ -115,12 +114,12 @@ def main():
     # definition of args to pass to template_method (conv's number of filters, dense neurons and batch size)
     alex_args = (
         2, # number of normal convolutional layer (+init conv)
-        3, # number of stack cnn layers
-        16, # number of feature maps of initial conv layer
-        16, # growth rate
+        2, # number of stack cnn layers
+        70, # number of feature maps of initial conv layer
+        19, # growth rate
         1, # number of FCL Layers
-        16, # number neurons of Full Connected Layer
-        config.BATCH_SIZE_ALEX_AUG # batch size
+        43, # number neurons of Full Connected Layer
+        9# batch size
     )
 
     # apply build, train and predict
@@ -156,11 +155,11 @@ def main():
     )
 
     # apply build, train and predict
-    model, predictions, history = vggnet.template_method(*vgg_args)
+    #model, predictions, history = vggnet.template_method(*vgg_args)
     ##vggnet.save(model, config.VGG_NET_WEIGHTS_FILE)
 
     # print final results
-    config_func.print_final_results(y_test=data_obj.y_test, predictions=predictions, history=history, dict=False)
+    #config_func.print_final_results(y_test=data_obj.y_test, predictions=predictions, history=history, dict=False)
 
     ## ---------------------------RESNET APPLICATION ------------------------------------
 
@@ -189,6 +188,31 @@ def main():
     # print final results
     #config_func.print_final_results(y_test=data_obj.y_test, predictions=predictions, history=history, dict=False)
 
+    ## ---------------------------DENSENET APPLICATION ------------------------------------
+
+    # # DICTIONARIES DEFINITION
+    numberLayers = (
+        4, #BLOCKS
+        1 #DENSE LAYERS
+    )
+
+    valuesLayers = (
+        24, # initial number of Feature Maps
+        4, # number of dense blocks
+        3, # number of layers in each block
+        12, # growth rate
+        0.5, # compression rate
+        config.BATCH_SIZE_ALEX_AUG # batch size
+    )
+
+    densenet = model_factory.getModel(config.DENSE_NET, data_obj, *numberLayers)
+
+    densenet.addStrategy(data_augment)
+
+    model, predictions, history = densenet.template_method(*valuesLayers)
+
+    config_func.print_final_results(data_obj.y_test, predictions, history)
+
     ## --------------------------- ENSEMBLE OF MODELS ------------------------------------
 
     # get weights of all methods from files
@@ -216,6 +240,7 @@ def main():
     # pso_alex = opt_fact.createOptimizer(config.PSO_OPTIMIZER, alexNet, *config.pso_init_args_alex)
     # pso_vgg = opt_fact.createOptimizer(config.PSO_OPTIMIZER, vggnet, *config.pso_init_args_vgg)
     # pso_resnet = opt_fact.createOptimizer(config.PSO_OPTIMIZER, resnet, *config.pso_init_args_resnet)
+    # pso_dense = opt_fact.createOptimizer(config.PSO_OPTIMIZER, densenet, *config.pso_init_args_densenet)
     #
     # # optimize and print best cost
     # cost, pos, optimizer = pso_resnet.optimize()
@@ -224,6 +249,5 @@ def main():
     # pso_resnet.plotCostHistory(optimizer)
     # pso_resnet.plotPositionHistory(optimizer, np.array(config.X_LIMITS), np.array(config.Y_LIMITS), config.PSO_POSITION_ITERS,
     #                            config.LABEL_X_AXIS, config.LABEL_Y_AXIS)
-
 if __name__ == "__main__":
     main()

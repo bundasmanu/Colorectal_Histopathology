@@ -1,6 +1,6 @@
 from . import Model
 from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Activation, Dropout, BatchNormalization, Dense, Flatten, Input
+from keras.layers import Conv2D, MaxPooling2D, Activation, Dropout, BatchNormalization, Dense, Flatten, Input, ZeroPadding2D
 import config
 from exceptions import CustomError
 from .Strategies_Train import Strategy
@@ -37,15 +37,15 @@ class AlexNet(Model.Model):
         try:
 
             if input_shape != None:
-                input = Conv2D(filters=numberFilters, input_shape=input_shape, kernel_size=(3,3), strides=2,
+                input = Conv2D(filters=numberFilters, input_shape=input_shape, kernel_size=(5,5), strides=2, kernel_initializer='he_uniform',
                                padding=config.SAME_PADDING, kernel_regularizer=regularizers.l2(config.DECAY)) (input)
             else:
-                input = Conv2D(filters=numberFilters, kernel_size=(3, 3), strides=1,
+                input = Conv2D(filters=numberFilters, kernel_size=(3, 3), strides=1, kernel_initializer='he_uniform',
                                padding=config.SAME_PADDING, kernel_regularizer=regularizers.l2(config.DECAY))(input)
 
             input = Activation(config.RELU_FUNCTION) (input)
             input = BatchNormalization() (input)
-            input = MaxPooling2D(pool_size=(2,2), strides=2) (input)
+            input = MaxPooling2D(pool_size=(3,3), strides=2, padding='same') (input)
             input = Dropout(dropoutRate) (input)
 
             return input
@@ -66,14 +66,14 @@ class AlexNet(Model.Model):
 
         try:
 
-            input = Conv2D(filters=numberFilters, kernel_size=(3,3), strides=1, padding=config.SAME_PADDING,
+            input = Conv2D(filters=numberFilters, kernel_size=(3,3), strides=1, padding=config.SAME_PADDING, kernel_initializer='he_uniform',
                            kernel_regularizer=regularizers.l2(config.DECAY)) (input)
             input = Activation(config.RELU_FUNCTION) (input)
-            input = Conv2D(filters=numberFilters, kernel_size=(3,3), strides=1, padding=config.SAME_PADDING,
+            input = Conv2D(filters=numberFilters, kernel_size=(3,3), strides=1, padding=config.SAME_PADDING, kernel_initializer='he_uniform',
                            kernel_regularizer=regularizers.l2(config.DECAY)) (input)
             input = Activation(config.RELU_FUNCTION) (input)
             input = BatchNormalization() (input)
-            input = MaxPooling2D(pool_size=(2,2), strides=2) (input)
+            input = MaxPooling2D(pool_size=(3,3), strides=2, padding='same') (input)
             input = Dropout(dropoutRate) (input)
 
             return input
@@ -98,13 +98,14 @@ class AlexNet(Model.Model):
             input_shape = (config.WIDTH, config.HEIGHT, config.CHANNELS)
             input = Input(input_shape)
 
-            ## first convolution layer
-            model = self.add_conv(input, args[2], 0.25, input_shape=input_shape)
-
             ## simple convolution layers
-            numberFilters = args[2] + args[3]
+            numberFilters = args[2]
+            model = None
             for i in range(args[0]):
-                model = self.add_conv(model, numberFilters, 0.25)
+                if i == 0:
+                    model = self.add_conv(input, numberFilters, 0.25, input_shape=input_shape) ## first convolution layer
+                else:
+                    model = self.add_conv(model, numberFilters, 0.25)
                 numberFilters += args[3]
 
             ## stacked convolutional layers
@@ -117,7 +118,7 @@ class AlexNet(Model.Model):
 
             # Full Connected Layer(s)
             for i in range(args[4]):
-                model = Dense(units=args[5], kernel_regularizer=regularizers.l2(config.DECAY)) (model)
+                model = Dense(units=args[5], kernel_regularizer=regularizers.l2(config.DECAY), kernel_initializer='he_uniform',) (model)
                 model = Activation(config.RELU_FUNCTION) (model)
                 model = BatchNormalization() (model)
                 if i != (args[4] - 1):
