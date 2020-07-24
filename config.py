@@ -115,11 +115,11 @@ WARNING_SUBSAMPLING = "\nIf you want to subsampling data, please pass a value >0
 
 #PSO OPTIONS
 PARTICLES = 20
-ITERATIONS = 12
+ITERATIONS = 15
 PSO_DIMENSIONS = 5
 TOPOLOGY_FLAG = 0 # 0 MEANS GBEST, AND 1 MEANS LBEST
-gbestOptions = {'w' : 0.9, 'c1' : 0.7, 'c2' : 0.7}
-lbestOptions = {'w' : 0.9, 'c1' : 0.7, 'c2' : 0.7, 'k' : 4, 'p' : 2} # p =2, means euclidean distance
+gbestOptions = {'w' : 0.7, 'c1' : 1.4, 'c2' : 1.4}
+lbestOptions = {'w' : 0.7, 'c1' : 1.4, 'c2' : 1.4, 'k' : 2, 'p' : 2} # p =2, means euclidean distance
 
 #GA OPTIONS
 TOURNAMENT_SIZE = 100
