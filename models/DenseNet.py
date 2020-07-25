@@ -186,14 +186,14 @@ class DenseNet(Model.Model):
                                                         patience=1,
                                                         factor=0.7,
                                                         mode='min',
-                                                        verbose=0,
+                                                        verbose=1,
                                                         min_lr=0.000001)
 
             decrease_callback2 = ReduceLROnPlateau(monitor='loss',
                                                         patience=1,
                                                         factor=0.7,
                                                         mode='min',
-                                                        verbose=0,
+                                                        verbose=1,
                                                         min_lr=0.000001)
 
             weights_y_train = config_func.decode_array(y_train)
