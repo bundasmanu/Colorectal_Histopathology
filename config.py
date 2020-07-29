@@ -115,7 +115,7 @@ WARNING_SUBSAMPLING = "\nIf you want to subsampling data, please pass a value >0
 
 #PSO OPTIONS
 PARTICLES = 20
-ITERATIONS = 15
+ITERATIONS = 10
 PSO_DIMENSIONS = 5
 TOPOLOGY_FLAG = 0 # 0 MEANS GBEST, AND 1 MEANS LBEST
 gbestOptions = {'w' : 0.7, 'c1' : 1.4, 'c2' : 1.4}
@@ -156,8 +156,8 @@ MAX_VALUES_LAYERS_ALEX_NET = [4.99, 3.99, 96, 48, 2.99, 96, 48] # nº of normal 
 MIN_VALUES_LAYERS_ALEX_NET = [1, 1, 4, 0, 1, 16, 6]
 MAX_VALUES_LAYERS_VGG_NET = [7.99, 96, 48, 2.99, 72, 48] # nº of stack cnn layers, nº of feature maps of initial conv, growth rate, nº neurons of FCL layer and batch size
 MIN_VALUES_LAYERS_VGG_NET = [2, 4, 0, 1, 16, 6]
-MAX_VALUES_LAYERS_RES_NET = [96, 5.99, 3.99, 48, 48] # number of filters of first conv layer, number of conv+identity blocks, nº identity blocks, growth rate and batch size
-MIN_VALUES_LAYERS_RES_NET = [4, 1, 1, 0, 6]
+MAX_VALUES_LAYERS_RES_NET = [96, 5.99, 2.99, 48, 48] # number of filters of first conv layer, number of conv+identity blocks, nº identity blocks, growth rate and batch size
+MIN_VALUES_LAYERS_RES_NET = [4, 1, 0, 0, 6]
 MAX_VALUES_LAYERS_DENSE_NET = [96, 4.99, 6.99, 24, 1, 48] # nº of initial filters, nº of dense blocks, nº of composite blocks, growth rate, compression rate and batch size
 MIN_VALUES_LAYERS_DENSE_NET = [4, 1, 2, 0, 0.1, 6]
 

@@ -176,17 +176,17 @@ def main():
     resnet_args = (
         48, # number of filters of initial CNN layer
         4, # number of consecutive conv+identity blocks
-        1, # repetition of identity block's, by default resnet-18 is 1 (1conv block + 1 identity block) for all layers
+        0, # repetition of identity block's, by default resnet-18 is 1 (1conv block + 1 identity block) for all layers
         8, # growth rate
         config.BATCH_SIZE_ALEX_AUG, # batch size
     )
 
     # apply build, train and predict
-    #model, predictions, history = resnet.template_method(*resnet_args)
+    model, predictions, history = resnet.template_method(*resnet_args)
     ##resnet.save(model, config.RES_NET_WEIGHTS_FILE)
 
     # print final results
-    #config_func.print_final_results(y_test=data_obj.y_test, predictions=predictions, history=history, dict=False)
+    config_func.print_final_results(y_test=data_obj.y_test, predictions=predictions, history=history, dict=False)
 
     ## ---------------------------DENSENET APPLICATION ------------------------------------
 
@@ -209,9 +209,9 @@ def main():
 
     densenet.addStrategy(data_augment)
 
-    model, predictions, history = densenet.template_method(*valuesLayers)
+    #model, predictions, history = densenet.template_method(*valuesLayers)
 
-    config_func.print_final_results(data_obj.y_test, predictions, history)
+    #config_func.print_final_results(data_obj.y_test, predictions, history)
 
     ## --------------------------- ENSEMBLE OF MODELS ------------------------------------
 
