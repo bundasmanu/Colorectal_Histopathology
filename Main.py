@@ -182,11 +182,11 @@ def main():
     )
 
     # apply build, train and predict
-    model, predictions, history = resnet.template_method(*resnet_args)
+    #model, predictions, history = resnet.template_method(*resnet_args)
     ##resnet.save(model, config.RES_NET_WEIGHTS_FILE)
 
     # print final results
-    config_func.print_final_results(y_test=data_obj.y_test, predictions=predictions, history=history, dict=False)
+    #config_func.print_final_results(y_test=data_obj.y_test, predictions=predictions, history=history, dict=False)
 
     ## ---------------------------DENSENET APPLICATION ------------------------------------
 
@@ -199,7 +199,7 @@ def main():
     valuesLayers = (
         24, # initial number of Feature Maps
         4, # number of dense blocks
-        3, # number of layers in each block
+        5, # number of layers in each block
         12, # growth rate
         0.5, # compression rate
         config.BATCH_SIZE_ALEX_AUG # batch size
@@ -209,9 +209,9 @@ def main():
 
     densenet.addStrategy(data_augment)
 
-    #model, predictions, history = densenet.template_method(*valuesLayers)
+    model, predictions, history = densenet.template_method(*valuesLayers)
 
-    #config_func.print_final_results(data_obj.y_test, predictions, history)
+    config_func.print_final_results(data_obj.y_test, predictions, history)
 
     ## --------------------------- ENSEMBLE OF MODELS ------------------------------------
 
