@@ -35,6 +35,7 @@ class DataAugmentation(Strategy.Strategy):
                 data.y_train,
                 shuffle=True,
                 batch_size=config.BATCH_SIZE_ALEX_AUG,
+                seed=config.RANDOM_STATE
             )
 
             return train_generator

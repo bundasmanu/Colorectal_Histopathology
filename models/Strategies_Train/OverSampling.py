@@ -62,7 +62,7 @@ class OverSampling(Strategy.Strategy):
             decoded_ytrain = keras.utils.to_categorical(decoded_ytrain, config.NUMBER_CLASSES)
 
             # SHUFFLE DATA
-            X_train, decoded_ytrain = shuffle(X_train, decoded_ytrain)
+            X_train, decoded_ytrain = shuffle(X_train, decoded_ytrain, random_state=config.RANDOM_STATE)
 
             return X_train, decoded_ytrain
 
