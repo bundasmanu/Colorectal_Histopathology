@@ -68,7 +68,6 @@ class ResNet(Model.Model):
         '''
         THIS FUNCTIONS REPRESENTS THE CONCEPT OF CONVOLUTION BLOCK ON RESNET, COMBINING MAIN PATH AND SHORTCUT
             paper: https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf
-            residual model image (outout same): https://www.youtube.com/watch?v=wqkc-sj5H94
         :param tensor_input: input_tensor result of previous block application on cnn architecture (conv_block or identity_block)
         :param args: number of filters to populate conv2d layers
         :return: tensor merge of path created using convs and final shortcut
@@ -115,7 +114,6 @@ class ResNet(Model.Model):
         #---------RESNET 18 AND 34 ARCHITECTURE: https://datascience.stackexchange.com/questions/33022/how-to-interpert-resnet50-layer-types/47489
         #---------VERY GOOD EXPLANATION: http://ethen8181.github.io/machine-learning/keras/resnet_cam/resnet_cam.html#Identity-Block
         ## model based on resnet-18 approach and described in paper cited in identity_block and convolution_block functions
-        ## INFO THAT RESNET DOESN'T USE FULLY CONNECTED LAYERS (ONLY OUTPUT LAYER) --> https://stackoverflow.com/questions/44925467/does-resnet-have-fully-connected-layers
         try:
 
             # IF USER ALREADY HAVE A TRAINED MODEL, AND NO WANTS TO BUILD AGAIN A NEW MODEL
@@ -199,7 +197,7 @@ class ResNet(Model.Model):
                     else:
                         X_train, y_train = self.StrategyList[j].applyStrategy(self.data)
 
-            es_callback = EarlyStopping(monitor=config.VALIDATION_LOSS, patience=3)
+            es_callback = EarlyStopping(monitor=config.VALIDATION_LOSS, patience=5, restore_best_weights=True)
             decrease_callback = ReduceLROnPlateau(monitor=config.LOSS,
                                                         patience=1,
                                                         factor=0.7,

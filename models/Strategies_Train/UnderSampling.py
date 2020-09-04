@@ -6,9 +6,6 @@ import numpy as np
 import keras
 from sklearn.utils import shuffle
 import Data
-import copy
-
-#REF: https://www.kaggle.com/rafjaa/resampling-strategies-for-imbalanced-datasets
 
 class UnderSampling(Strategy.Strategy):
 
@@ -29,7 +26,6 @@ class UnderSampling(Strategy.Strategy):
 
             if not bool(kwargs) == False: #CHECK IF DICT IS EMPTY
                 raise CustomError.ErrorCreationModel(config.ERROR_NO_ARGS_ACCEPTED)
-                return
 
             numberValues = [np.argmax(data.y_train, axis=1)]
             numberValues = np.array(numberValues)
