@@ -39,7 +39,7 @@ The major limitation of this dataset is the low number of samples available. The
 3. Check config.py file, and redraw the configuration variables used to read, obtain and divide the data of the problem, and variables that are used for construction, training and optimization of the architectures:  
     * Samples of problem are readed from ../input/images/LESION_NAME.tif, e.g, ../input/images/STROMA.tif --> this is an example that you need to pay attention and redraw before use project;
 
-## Data Acess:
+## Data Access:
 https://www.kaggle.com/kmader/colorectal-histology-mnist
 
 ### Licence
