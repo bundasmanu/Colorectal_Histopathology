@@ -33,6 +33,12 @@ The major limitation of this dataset is the low number of samples available. The
 | Ensemble Average All Models | 21,4 MB | 95.5% | 95.6% | [Ensemble All Models h5 File](https://github.com/bundasmanu/ProjetoMestrado/blob/master/arquiteturas_otimizadas/Colorectal_Histopathology/ensemble_all.h5?raw=true) |
 | Ensemble Average Res+ Dense | 9,9 MB | 96.6% | 96.6% | [Ensemble Best Combination h5 File](https://github.com/bundasmanu/ProjetoMestrado/blob/master/arquiteturas_otimizadas/Colorectal_Histopathology/ensemble_best.h5?raw=true) |
 
+## How can I use it
+1. Clone Project: git clone 
+2. Install requirements: pip install -r requirements.txt
+3. Check config.py file, and redraw the configuration variables used to read, obtain and divide the data of the problem, and variables that are used for construction, training and optimization of the architectures.
+  * Samples of problem are readed from ../input/images/LESION_NAME.tif, e.g, ../input/images/STROMA.tif --> this is an example that you need to pay attention and redraw before use project;
+
 ## Data Acess:
 https://www.kaggle.com/kmader/colorectal-histology-mnist
 
