@@ -45,4 +45,4 @@ https://www.kaggle.com/kmader/colorectal-histology-mnist
 ### Licence
 
 GPL-3.0 License  
-I am open to new ideas and improvements to the current repository. However, until the defense of my Project report, I will not accept pull request's.
+I am open to new ideas and improvements to the current repository. However, until the defense of my master thesis, I will not accept pull request's.
