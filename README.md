@@ -13,12 +13,30 @@ The dataset is composed of 5000 RGB samples, with dimensions 150*150 (height and
   - Adipose;
   - Empty;
 
-## Objectives:
-  - Problem understanding;
-  - Pre-Analysis of data;
-  - Creation of several CNN Models (AlexNet, VGGNet and ResNet);
-  - Application of various techniques to deal with the main constraints of the dataset (e.g. imbalaced classes);
-  - Application of PSO optimization tecnique, in order to optimize results and minimize complexity of models;
+## Limitations:
+The major limitation of this dataset is the low number of samples available. The dataset is balanced and no sampling technique is required and used. 
+
+## What this project offers
+* Disponibilization of a Jupyter notebook with problem pre-analysis;
+* The Data Augmentation technique is used to allow the consequent increase in the number of training samples available for model learning;
+* It implements and uses four convolutional architectures for the consequent resolution of the problem: AlexNet, VGGNet, ResNet and DenseNet;
+* Use of PSO algorithm to optimize the structure and other hyperparameters of different convolutional architectures;
+* Application of the ensemble technique to improve the performance obtained, individually, by the architectures (combining the probabilistic distributions of the different architectures - average);
+
+### Results - Colorectal Histopathology:
+| Model | Memory | Macro Average F1Score | Accuracy | File | 
+|---|---|---|---|---|
+| AlexNet | 19,0 MB | 94.2% | 94.3% | [AlexNet h5 File](https://github.com/bundasmanu/ProjetoMestrado/blob/master/arquiteturas_otimizadas/Colorectal_Histopathology/alexnet_gbest_oficial.h5?raw=true) |
+| VGGNet | 15,5 MB | 94.5% | 94.6% | [VGGNet h5 File](https://github.com/bundasmanu/ProjetoMestrado/blob/master/arquiteturas_otimizadas/Colorectal_Histopathology/vggnet_gbest_oficial.h5?raw=true) |
+| ResNet | 11,4 MB |  95.5% | 95.7% | [ResNet h5 File](https://github.com/bundasmanu/ProjetoMestrado/blob/master/arquiteturas_otimizadas/Colorectal_Histopathology/resnet_gbest_oficial.h5?raw=true) |
+| DenseNet | 17,9 MB | 96.0% | 96.1% | [DenseNet h5 File](https://github.com/bundasmanu/ProjetoMestrado/blob/master/arquiteturas_otimizadas/Colorectal_Histopathology/densenet_gbest_oficial.h5?raw=true) |
+| Ensemble Average All Models | 21,4 MB | 95.5% | 95.6% | [Ensemble All Models h5 File](https://github.com/bundasmanu/ProjetoMestrado/blob/master/arquiteturas_otimizadas/Colorectal_Histopathology/ensemble_all.h5?raw=true) |
+| Ensemble Average Res+ Dense | 9,9 MB | 96.6% | 96.6% | [Ensemble Best Combination h5 File](https://github.com/bundasmanu/ProjetoMestrado/blob/master/arquiteturas_otimizadas/Colorectal_Histopathology/ensemble_best.h5?raw=true) |
 
 ## Data Acess:
 https://www.kaggle.com/kmader/colorectal-histology-mnist
+
+### Licence
+
+GPL-3.0 License  
+I am open to new ideas and improvements to the current repository. However, until the defense of my Project report, I will not accept pull request's.
