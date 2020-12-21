@@ -42,7 +42,6 @@ The major limitation of this dataset is the low number of samples available. The
 ## Data Access:
 https://www.kaggle.com/kmader/colorectal-histology-mnist
 
-### Licence
-
+## Licence
 GPL-3.0 License  
 I am open to new ideas and improvements to the current repository. However, until the defense of my master thesis, I will not accept pull request's.
